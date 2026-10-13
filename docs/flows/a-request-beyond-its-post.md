@@ -3,13 +3,13 @@
 ```mermaid
 sequenceDiagram
   participant K as Kofi (asks)
-  participant G as Gestion
+  participant G as Finance
   participant E as Kete Enterprise
   participant D as Who the circuit finds
   K->>G: purchases_ask — 1 500 000 on « Matériel » of his project
   G->>E: GET /v1/projects/:id (his token): the posts of the budget
   G->>G: 1 530 000 − 120 000 committed = 1 410 000 left: 90 000 beyond
-  G->>E: POST /v1/apps/prd_kete_gestion/decisions — subject beyond_budget, the project, the amount
+  G->>E: POST /v1/apps/prd_kete_finance/decisions — subject beyond_budget, the project, the amount
   E->>D: in her Inbox: « DA-2026-0002 — … (dépasse le poste « Matériel » de 90 000 F CFA) »
   D->>E: sent back: « Négociez le prix »
   E->>G: POST /api/centre/decisions — the request's id only

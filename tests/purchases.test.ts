@@ -92,7 +92,7 @@ function fakeCenter(input: string | URL | Request, init?: RequestInit): Promise<
       ? Promise.resolve(Response.json({ project }))
       : no('not_found', 404);
   }
-  if (path === '/v1/apps/prd_kete_gestion/decisions' && init?.method === 'POST') {
+  if (path === '/v1/apps/prd_kete_finance/decisions' && init?.method === 'POST') {
     center.asked.push({ ...body, by: userId });
     const subject = String(body['subject']);
     if (!center.circuits.has(subject)) return no('no_circuit', 422);
@@ -152,7 +152,7 @@ const ids = {} as Record<'cables' | 'inverter' | 'note' | 'advance' | 'trip', st
 
 beforeAll(async () => {
   process.env.ENTERPRISE_API_URL = 'https://api.center.test';
-  process.env.PUBLIC_URL = 'https://gestion.test';
+  process.env.PUBLIC_URL = 'https://finance.test';
   vi.stubGlobal('fetch', fakeCenter);
   db = await createTestSchema({
     migrate: async (owner, context) => {

@@ -1,5 +1,6 @@
 import type { KeteIdentity } from '@kete/auth';
 import { assignBusinessRole } from '@kete/capabilities';
+import { treasuryStanding } from '@/features/treasury';
 import { transaction } from '@/platform/db';
 import { registry } from '@/platform/registry';
 import { asPerson } from '@/platform/rights';
@@ -9,7 +10,7 @@ import { syncCenter } from '@/platform/sync';
 // The demonstration's data: a small solar installer, « Soleil d'Afrique », a few days into its
 // month. Everything is written through the app's own gestures, as its people would.
 
-export const DEMO_ORGANIZATION = 'org_demo_gestion';
+export const DEMO_ORGANIZATION = 'org_demo_finance';
 
 const person = (userId: string, name: string, role: KeteIdentity['role']): KeteIdentity => ({
   userId,
@@ -60,6 +61,26 @@ export async function seedDemo(): Promise<void> {
     for (const [role, who] of Object.entries(demoPeople)) {
       if (role !== 'owner') await assignBusinessRole(db, DEMO_ORGANIZATION, who.userId, role);
     }
+  });
+
+  // The accounts first: what is received and paid then lands on them.
+  await act(owner, 'treasury_open_account', {
+    name: 'Ecobank — compte courant',
+    kind: 'bank',
+    opening: 3_500_000,
+    openedOn: day(-30),
+  });
+  const till = await act<{ accountId: string }>(accountant, 'treasury_open_account', {
+    name: 'Caisse du bureau',
+    kind: 'till',
+    opening: 120_000,
+    openedOn: day(-30),
+  });
+  await act(accountant, 'treasury_open_account', {
+    name: 'TMoney',
+    kind: 'mobile',
+    opening: 45_000,
+    openedOn: day(-30),
   });
 
   // Won, partly invoiced, partly paid.
@@ -210,4 +231,21 @@ export async function seedDemo(): Promise<void> {
     ],
   });
   await act(owner, 'purchases_decide', { ...trip, decision: 'approve' });
+
+  // The till, counted last night: 500 F short, said as it is.
+  const standing = await transaction(DEMO_ORGANIZATION, (db) => treasuryStanding(db));
+  const drawer = standing.accounts.find((account) => account.accountId === till.accountId);
+  await act(cashier, 'till_close', {
+    accountId: till.accountId,
+    closedOn: day(-1),
+    counted: (drawer?.balance ?? 500) - 500,
+    note: 'Il manque une pièce de 500 F.',
+  });
+  await act(accountant, 'treasury_move', {
+    accountId: standing.accounts.find((account) => account.kind === 'bank')?.accountId,
+    direction: 'out',
+    amount: 4_500,
+    on: day(-1),
+    label: 'Frais de tenue de compte',
+  });
 }

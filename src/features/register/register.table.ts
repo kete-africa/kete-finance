@@ -4,7 +4,7 @@ import { organizationPolicySql, type SqlExecutor } from '@kete/tenancy';
 export type FactKind = 'invoiced' | 'received' | 'committed' | 'spent';
 
 /**
- * A fact of money, as Gestion holds it: said again under its key, it replaces what was said. An
+ * A fact of money, as Finance holds it: said again under its key, it replaces what was said. An
  * invoice's amount is what is still due; a commitment's, what is still to pay.
  */
 export interface Fact {
@@ -189,4 +189,37 @@ export async function listFacts(
     [query.projectId ?? null, query.kind ?? null, query.limit ?? 500],
   );
   return rows.map(toFact);
+}
+
+/**
+ * What each project received, spent and still owes, and the same for the running of the
+ * organization: what the treasury computes the three states of money from.
+ */
+export async function moneyByProject(db: SqlExecutor): Promise<{
+  projects: { projectId: string; received: number; spent: number; committed: number }[];
+  running: { received: number; spent: number; committed: number };
+}> {
+  const { rows } = await db.query<{
+    project_id: string | null;
+    received: string;
+    spent: string;
+    committed: string;
+  }>(
+    `select project_id,
+            coalesce(sum(amount) filter (where kind = 'received'), 0) as received,
+            coalesce(sum(amount) filter (where kind = 'spent'), 0) as spent,
+            coalesce(sum(amount) filter (where kind = 'committed'), 0) as committed
+       from money_register where not gone group by project_id order by project_id`,
+  );
+  const figures = (row?: { received: string; spent: string; committed: string }) => ({
+    received: Number(row?.received ?? 0),
+    spent: Number(row?.spent ?? 0),
+    committed: Number(row?.committed ?? 0),
+  });
+  return {
+    projects: rows
+      .filter((row) => row.project_id !== null)
+      .map((row) => ({ projectId: row.project_id as string, ...figures(row) })),
+    running: figures(rows.find((row) => row.project_id === null)),
+  };
 }

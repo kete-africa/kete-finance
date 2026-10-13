@@ -8,7 +8,7 @@ export default defineProject({
   test: {
     // Compiled copies of the tests are not tests (Vitest 4 no longer skips dist by default).
     exclude: ['**/node_modules/**', '**/dist/**'],
-    name: 'kete-gestion',
+    name: 'kete-finance',
     environment: 'node',
     include: ['tests/**/*.test.ts'],
     setupFiles: ['./tests/setup.ts'],

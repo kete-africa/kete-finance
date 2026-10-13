@@ -1,6 +1,6 @@
 # Roadmap
 
-The steps of Kete Gestion. Each closes on a proof: a test that names it, and — when a screen
+The steps of Kete Finance. Each closes on a proof: a test that names it, and — when a screen
 exists — what was seen in the demonstration. « Built » is not « proven with a real company »:
 nothing here has been used by one yet.
 
@@ -8,7 +8,13 @@ nothing here has been used by one yet.
 | ---- | --------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------ |
 | G1   | `001-sales`     | Quotes with their cost, invoices numbered without a gap, money received, a won quote's project             | « A won quote becomes a project with its budget »       | Built        |
 | G2   | `002-purchases` | Purchase requests with their project and post, expense notes, advances, the memory of prices               | « A request beyond its post goes up the circuit »       | Built        |
-| G3   | `003-treasury`  | Accounts and tills, the three states of money, the funds of each project, the till closed every day        | « Really available » is the bank less reserved and committed | Next         |
+| G3   | `003-treasury`  | Accounts and tills, the three states of money, the funds of each project, the till closed every day        | « Really available » is the bank less reserved and committed | Built        |
+
+After G3, one step is left for this app before a real company tries it:
+
+| Step | What it gives                                                                                              | Proof                                                              |
+| ---- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| G4   | The demonstration joined to Kete Enterprise's: the same people, the center's projects and circuits, for real | A quote won here is a project there, and its request waits in an Inbox |
 
 ## What every step rests on
 

@@ -1,18 +1,18 @@
-# Kete Gestion
+# Kete Finance
 
 The money of a company, in one register: **sales** (quotes, invoices, money received),
 **purchases and expenses**, **treasury**. One app, three parts — because a franc invoiced, a franc
 committed and a franc in the bank are the same franc seen at three moments.
 
-Gestion is one of the four apps behind the center, Kete Enterprise (doctrine D-048). It keeps no
+Finance is one of the four apps behind the center, Kete Enterprise (doctrine D-048). It keeps no
 client file and no project of its own: third parties and projects are the center's references
 (D-047), and every fact of money carries its project — or counts in the running of the
-organization (D-049). Kete executes no payment and keeps no general ledger: Gestion says what is
+organization (D-049). Kete executes no payment and keeps no general ledger: Finance says what is
 invoiced, received, committed and spent, with the proof of each gesture.
 
 ```mermaid
 flowchart LR
-  P[Person] -->|screens /ventes| W[Gestion]
+  P[Person] -->|screens /ventes| W[Finance]
   C[Copilot · agents] -->|/mcp: reads, prepares| W
   W -->|same rights, journal, autonomy| DB[(Postgres · RLS)]
   W -->|register of money: every fact once| DB
@@ -30,7 +30,7 @@ flowchart LR
 | ---------------------- | ----------------------------------------------------------------------- |
 | Sales                  | Built (spec 001): quotes, invoices, receipts, a won quote's project     |
 | Purchases and expenses | Built (spec 002): requests by project and post, expense notes, advances |
-| Treasury               | Next (step G3)                                                          |
+| Treasury               | Built (spec 003): accounts, the three states of money, funds by project |
 
 ## Run locally
 
@@ -67,7 +67,7 @@ pnpm typecheck
 | Variable              | What it sets                                                          |
 | --------------------- | --------------------------------------------------------------------- |
 | `ENTERPRISE_API_URL`  | The center. Without it the app works alone: no project, no reference  |
-| `GESTION_CURRENCY`    | The currency of new documents (ISO 4217); `XOF` by default            |
+| `FINANCE_CURRENCY`    | The currency of new documents (ISO 4217); `XOF` by default            |
 
 ## Deploy
 

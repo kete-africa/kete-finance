@@ -485,11 +485,12 @@ type AdvanceRow = {
   justified: string;
   returned: string;
   given_on: string;
+  method: ReceiptMethod;
   status: 'open' | 'closed';
 };
 
 const advanceColumns = `advance_id, number, holder_id, holder_name, purpose, project_id, project_name,
-  currency, amount, justified, returned, to_char(given_on, 'YYYY-MM-DD') as given_on, status`;
+  currency, amount, justified, returned, to_char(given_on, 'YYYY-MM-DD') as given_on, method, status`;
 
 const toAdvance = (row: AdvanceRow): Advance => ({
   advanceId: row.advance_id,
@@ -503,6 +504,7 @@ const toAdvance = (row: AdvanceRow): Advance => ({
   justified: Number(row.justified),
   returned: Number(row.returned),
   givenOn: row.given_on,
+  method: row.method,
   status: row.status,
 });
 

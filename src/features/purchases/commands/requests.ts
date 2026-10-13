@@ -3,6 +3,7 @@ import { formatNumber, nextNumber } from '@kete/sequences';
 import type { SqlExecutor } from '@kete/tenancy';
 import { z } from 'zod';
 import { CURRENCY, engagedOn, hrefOf, sayFact, today } from '@/features/register';
+import { moveMoney } from '@/features/treasury';
 import { announce } from '@/platform/announce';
 import { actingFor, currentName } from '@/platform/person';
 import {
@@ -355,6 +356,16 @@ export const payRequest = defineCommand({
       reference: input.reference,
       recordedBy: by,
       settles: owed === 0,
+    });
+    await moveMoney(db, organizationId, {
+      direction: 'out',
+      amount: input.amount,
+      on: input.paidOn,
+      method: input.method,
+      label: labelOf(request),
+      source: `payment:${paymentId}`,
+      projectId: request.projectId,
+      recordedBy: by,
     });
     const fact = {
       currency: request.currency,

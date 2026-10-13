@@ -1,8 +1,8 @@
 {
-  "name": "@kete/kete-gestion",
+  "name": "@kete/kete-finance",
   "private": true,
   "type": "module",
-  "description": "Kete Gestion: sales, purchases and expenses, treasury — one register of money, behind Kete Enterprise.",
+  "description": "Kete Finance: sales, purchases and expenses, treasury — one register of money, behind Kete Enterprise.",
   "scripts": {
     "dev": "vite dev --port 3400",
     "build": "vite build",

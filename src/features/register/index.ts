@@ -4,6 +4,7 @@ export {
   dropFact,
   engagedOn,
   listFacts,
+  moneyByProject,
   moveFacts,
   registerMigrationSql,
   sayFact,

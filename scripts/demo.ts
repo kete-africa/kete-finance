@@ -8,7 +8,7 @@ import { createTestSchema, loadRepositoryEnv } from '@kete/testing';
 import pg from 'pg';
 import { migrations } from '../db/migrations';
 
-// `pnpm demo` — Kete Gestion on this machine, signed in, with a small company already at work, to
+// `pnpm demo` — Kete Finance on this machine, signed in, with a small company already at work, to
 // look at its screens. Nothing here is a deployment: the data live in a throwaway schema of the
 // *test* database (`.env`: KETE_TEST_OWNER_URL, KETE_TEST_APP_URL), dropped when the script stops.
 // There is no Compte Kete: the script signs a session with a secret made for this run, and a

@@ -1,8 +1,8 @@
 /**
- * The currency of the deployment's documents (`GESTION_CURRENCY`, ISO 4217): F CFA by default. A
+ * The currency of the deployment's documents (`FINANCE_CURRENCY`, ISO 4217): F CFA by default. A
  * document keeps the currency it was written in.
  */
-export const CURRENCY: string = (process.env.GESTION_CURRENCY ?? 'XOF').toUpperCase();
+export const CURRENCY: string = (process.env.FINANCE_CURRENCY ?? 'XOF').toUpperCase();
 
 /** Today, as documents date themselves (`2026-10-13`). */
 export function today(now: Date = new Date()): string {

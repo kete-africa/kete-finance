@@ -1,6 +1,6 @@
 {
-  "product": "prd_kete_gestion",
-  "name": "Kete Gestion",
+  "product": "prd_kete_finance",
+  "name": "Kete Finance",
   "version": "0.1.0",
   "events": [
     "metrics.daily"
