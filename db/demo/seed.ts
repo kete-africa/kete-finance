@@ -1,0 +1,139 @@
+import type { KeteIdentity } from '@kete/auth';
+import { assignBusinessRole } from '@kete/capabilities';
+import { transaction } from '@/platform/db';
+import { registry } from '@/platform/registry';
+import { asPerson } from '@/platform/rights';
+import { screenActor } from '@/platform/session';
+
+// The demonstration's data: a small solar installer, « Soleil d'Afrique », a few days into its
+// month. Everything is written through the app's own gestures, as its people would.
+
+export const DEMO_ORGANIZATION = 'org_demo_gestion';
+
+const person = (userId: string, name: string, role: KeteIdentity['role']): KeteIdentity => ({
+  userId,
+  email: `${userId}@example.test`,
+  name,
+  organizationId: DEMO_ORGANIZATION,
+  role,
+  apps: {},
+  twoFactor: false,
+  expiresAt: new Date(Date.now() + 8 * 3_600_000),
+});
+
+/** Who the demonstration can be opened as: the owner, and one person per role of the trade. */
+export const demoPeople = {
+  owner: person('usr_demo_afi', 'Afi Mensah', 'owner'),
+  sales: person('usr_demo_kossi', 'Kossi Adjo', 'member'),
+  buyer: person('usr_demo_yao', 'Yao Agbeko', 'member'),
+  accountant: person('usr_demo_lawson', 'Mme Lawson', 'member'),
+  cashier: person('usr_demo_essi', 'Essi Dogbe', 'member'),
+} as const;
+export type DemoRole = keyof typeof demoPeople;
+
+async function act<T = Record<string, unknown>>(
+  who: KeteIdentity,
+  name: string,
+  input: unknown,
+): Promise<T> {
+  const result = await asPerson(who, () =>
+    registry.invoke({
+      actor: screenActor(who),
+      organizationId: DEMO_ORGANIZATION,
+      name,
+      input,
+      confirmed: true,
+    }),
+  );
+  if (result.status !== 'done') throw new Error(`${name}: ${JSON.stringify(result)}`);
+  return result.output as T;
+}
+
+const day = (offset: number) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
+
+export async function seedDemo(): Promise<void> {
+  const { owner, sales, accountant, cashier } = demoPeople;
+  await transaction(DEMO_ORGANIZATION, async (db) => {
+    for (const [role, who] of Object.entries(demoPeople)) {
+      if (role !== 'owner') await assignBusinessRole(db, DEMO_ORGANIZATION, who.userId, role);
+    }
+  });
+
+  // Won, partly invoiced, partly paid.
+  const clinic = await act<{ quoteId: string }>(sales, 'quotes_create', {
+    title: 'Centrale solaire 12 kWc',
+    partyName: 'Clinique Biasa',
+    taxRate: 18,
+    validUntil: day(20),
+    lines: [
+      { label: 'Panneau 450 W', quantity: 8, unitPrice: 245_000, unitCost: 180_000, post: 'Matériel' },
+      { label: 'Onduleur hybride 10 kVA', quantity: 1, unitPrice: 1_450_000, unitCost: 1_100_000, post: 'Matériel' },
+      { label: 'Pose et mise en service', quantity: 1, unitPrice: 400_000, unitCost: 250_000, post: 'Main-d’œuvre' },
+      { label: 'Transport et levage', quantity: 1, unitPrice: 120_000, unitCost: 90_000, post: 'Transport' },
+    ],
+  });
+  await act(sales, 'quotes_send', clinic);
+  await act(sales, 'quotes_win', clinic);
+  const deposit = await act<{ invoiceId: string }>(sales, 'invoices_from_quote', {
+    ...clinic,
+    share: 30,
+    label: 'Acompte 30 %',
+    dueOn: day(10),
+  });
+  await act(accountant, 'invoices_issue', deposit);
+  await act(cashier, 'receipts_record', {
+    ...deposit,
+    amount: 800_000,
+    receivedOn: day(-1),
+    method: 'bank',
+    reference: 'VIR ECOBANK 4471',
+  });
+
+  // Sent, waiting for the client's answer.
+  const pharmacy = await act<{ quoteId: string }>(sales, 'quotes_create', {
+    title: 'Kit solaire 3 kWc',
+    partyName: 'Pharmacie du Port',
+    taxRate: 18,
+    validUntil: day(12),
+    lines: [
+      { label: 'Kit 3 kWc complet', quantity: 1, unitPrice: 1_850_000, unitCost: 1_400_000, post: 'Matériel' },
+      { label: 'Pose', quantity: 1, unitPrice: 150_000, unitCost: 80_000, post: 'Main-d’œuvre' },
+    ],
+  });
+  await act(sales, 'quotes_send', pharmacy);
+
+  // A draft, still being written.
+  await act(sales, 'quotes_create', {
+    title: 'Contrat de maintenance annuelle',
+    partyName: 'Hôtel Sarakawa',
+    taxRate: 18,
+    lines: [
+      { label: 'Visite trimestrielle', quantity: 4, unitPrice: 85_000, unitCost: 40_000, post: 'Main-d’œuvre' },
+    ],
+  });
+
+  // Won and not invoiced at all yet.
+  const school = await act<{ quoteId: string }>(sales, 'quotes_create', {
+    title: 'Éclairage solaire de la cour',
+    partyName: 'École La Colombe',
+    taxRate: 0,
+    lines: [
+      { label: 'Lampadaire solaire 60 W', quantity: 6, unitPrice: 95_000, unitCost: 62_000, post: 'Matériel' },
+      { label: 'Pose', quantity: 6, unitPrice: 15_000, unitCost: 8_000, post: 'Main-d’œuvre' },
+    ],
+  });
+  await act(owner, 'quotes_win', school);
+
+  // A service without a quote, issued, late.
+  const repair = await act<{ invoiceId: string }>(sales, 'invoices_create', {
+    title: 'Dépannage onduleur',
+    partyName: 'Imprimerie Nouvelle',
+    taxRate: 18,
+    dueOn: day(-6),
+    lines: [
+      { label: 'Diagnostic et remplacement de carte', quantity: 1, unitPrice: 135_000 },
+      { label: 'Déplacement', quantity: 1, unitPrice: 15_000 },
+    ],
+  });
+  await act(accountant, 'invoices_issue', repair);
+}

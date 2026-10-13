@@ -1,18 +1,25 @@
-# kete-gestion — project context
+# Kete Gestion — project context
 
 > The single place where this app's context lives. `AGENTS.md` points here.
 
 ## What this app is
 
-A Kete App, born from `kete-core`'s template (spec 029). Replace this paragraph with what the app
-does, for whom, and its first features.
+The money of a company, in one register, behind Kete Enterprise: **sales** (quotes, invoices,
+money received), **purchases and expenses**, **treasury**. One of the four generic apps of the
+doctrine (D-048). It requires the center for what it does not own: third parties and projects
+(D-047). Every fact of money carries its project and its budget post, or counts in the running of
+the organization (D-049).
+
+What it never does: execute a payment, keep a general ledger, hold a client file or a project of
+its own.
 
 ## Read before any action
 
 1. The Kete doctrine (`kete-africa/kete`): `docs/PRINCIPES.md`, `docs/CONCEPTION.md`,
-   `docs/ARCHITECTURE_APP.md`, `docs/DECISIONS.md`.
-2. `docs/ARCHITECTURE.md` and `docs/decisions/` — this app's architecture and decisions.
-3. Each feature's `README.md` (`src/features/*/README.md`).
+   `docs/ARCHITECTURE_APP.md`, `docs/DECISIONS.md` (D-047, D-048, D-049 for this app).
+2. `docs/ROADMAP.md` — the steps of this app, what is built and what is proven.
+3. `docs/ARCHITECTURE.md` and `docs/decisions/` — this app's architecture and decisions.
+4. Each feature's `README.md` (`src/features/*/README.md`) and its spec (`specs/`).
 
 ## Layout
 
@@ -20,21 +27,41 @@ does, for whom, and its first features.
 kete.json          the manifest (contract manifest.v1): product, version, events, and the
                    identity card (owner, data, AI, criticality), kept true as the app changes
 src/routes.ts      every address, once: English files, French addresses
-src/features/      one folder per feature: record, domain, commands, queries, policies,
-                   infrastructure, capabilities, ui, functions, README
+src/features/      one folder per feature: record, domain, commands, infrastructure,
+                   capabilities, policies, events, datasets, functions, ui, README
+  register/        the register of money: every fact once, told to the center
+  sales/           quotes, invoices, receipts
 src/platform/      the wiring, no business rule: sign-in, database, rights, registry, MCP,
-                   events, jobs, e-mails
+                   events, jobs, e-mails, and what the center is told after a gesture (sync.ts)
 src/worker/        the worker role: e-mails, events (pg-boss)
 db/migrations.ts   every table with its row-level security, in order
+db/demo/           the demonstration's data, written through the app's own gestures
 messages/          fr.json, en.json: no hard-coded string
+specs/             one folder per step: what changes, what stays for later, the proof
 tests/             every surface under the same rules
 ```
 
 ## Rules
 
+- Every amount is an integer of the currency's smallest unit, computed by `@kete/money` — never a
+  float, never a figure written by a model or summed on a screen.
+- A document that leaves — an issued invoice — takes its number from `@kete/sequences`, in the
+  transaction that writes it, and is never changed nor deleted afterwards.
+- Every fact of money is written in the register (`sayFact`) in the transaction of the gesture
+  that makes it true, under a key of its own: said again, it replaces what was said.
+- Who writes is not who issues, and who issues is not who holds the till: each gesture has its
+  permission, and the roles of the trade keep them apart by default.
 - Every gesture is a named command (@kete/commands), and every capability declares its autonomy
-  (@kete/capabilities): an agent that commits something prepares a draft a person decides.
+  (@kete/capabilities): an agent prepares, a person issues, pays and decides.
 - Every table carries `organization_id` and its RLS policy in the same migration.
 - No vendor name in a feature's domain or application layer: ports and adapters.
 - No hard-coded user-visible string; no secret in a file, a message or a commit.
 - A behavior change ships with its documentation and its diagram.
+
+## Branches
+
+```
+main       production — the human gesture only
+dev        integration
+NNN-slug   one step, branched from dev, with its spec in specs/NNN-slug
+```

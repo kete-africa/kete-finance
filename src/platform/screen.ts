@@ -3,6 +3,7 @@ import { getRequest } from '@tanstack/react-start/server';
 import { registry } from './registry';
 import { asPerson } from './rights';
 import { personOf, screenActor, tokenOf } from './session';
+import { syncCenter } from './sync';
 import { recordUse } from './usage';
 
 export class ScreenError extends Error {
@@ -21,6 +22,8 @@ export async function signedIn() {
   const token = await tokenOf(request);
   return {
     identity,
+    /** Her own token, kept on the server: what the center is asked with. */
+    token,
     caller: { actor: screenActor(identity), organizationId: identity.organizationId },
     /** Runs `work` with her rights: the center's grants, her business role, or her role's defaults. */
     as: <T>(work: () => T | Promise<T>) => asPerson(identity, work, token),
@@ -30,7 +33,8 @@ export async function signedIn() {
 /**
  * A person's gesture on a screen: the same capability an agent would call, under her rights. A
  * broken rule comes back as its code (`RuleError`), never as a crash: the screen words it from
- * `errors_<code>`. What she did is counted for her organization's usage.
+ * `errors_<code>`. What she did is counted for her organization's usage, and the center hears of
+ * what it changed — a won quote's project, a fact of money.
  */
 export async function perform<T = unknown>(
   name: string,
@@ -38,12 +42,15 @@ export async function perform<T = unknown>(
   /** The gesture's key: sent twice — a double tap, a retry — it runs once. */
   idempotencyKey?: string,
 ): Promise<Outcome<T>> {
-  const { identity, caller, as } = await signedIn();
+  const { identity, caller, as, token } = await signedIn();
   const outcome = await performGesture<T>(
     registry,
     { ...caller, name, input, ...(idempotencyKey ? { idempotencyKey } : {}) },
     as,
   );
-  if (outcome.ok) await recordUse(caller.organizationId, name, identity.userId);
+  if (outcome.ok) {
+    await recordUse(caller.organizationId, name, identity.userId);
+    await syncCenter(token, caller);
+  }
   return outcome;
 }

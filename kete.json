@@ -1,6 +1,6 @@
 {
   "product": "prd_kete_gestion",
-  "name": "kete-gestion",
+  "name": "Kete Gestion",
   "version": "0.1.0",
   "events": [
     "metrics.daily"
@@ -11,12 +11,14 @@
       "contact": "support@kete.africa"
     },
     "dataCategories": [
-      "personal"
+      "personal",
+      "financial",
+      "confidential"
     ],
     "ai": {
       "used": true,
       "purpose": "Answers questions with the readings the person may open (« Demander »), when a model is configured."
     },
-    "criticality": "low"
+    "criticality": "high"
   }
 }

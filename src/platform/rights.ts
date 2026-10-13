@@ -6,7 +6,7 @@ import {
   definePermissions,
 } from '@kete/capabilities';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { taskPermissions } from '@/features/tasks';
+import { salesPermissions } from '@/features/sales';
 import * as m from '@/paraglide/messages.js';
 import { getCenter } from './center';
 import { transaction } from './db';
@@ -18,7 +18,7 @@ import { words } from './words';
  * grant them to roles and positions.
  */
 export const permissions = definePermissions([
-  ...taskPermissions,
+  ...salesPermissions,
   // The organization's journal: who did what, agents included (@kete/admin).
   {
     name: 'journal:read',
@@ -29,11 +29,11 @@ export const permissions = definePermissions([
 ]);
 
 /**
- * The roles of the app's own trade (kete-core spec 093): a member holds what her business role
- * holds, as the owner ticked it — nothing without one. Replace `staff` by the roles of the trade
- * (a cashier, a washer) and name them in each permission's `businessRoles`.
+ * The roles of the trade (kete-core spec 093): a member holds what her business role holds, as
+ * the owner ticked it — nothing without one. Who sells, who buys, who keeps the accounts and who
+ * holds the till are four people, or four hats (doctrine D-049).
  */
-export const businessRoles = ['owner', 'staff'] as const;
+export const businessRoles = ['owner', 'sales', 'buyer', 'accountant', 'cashier'] as const;
 
 const rights = createRights({
   permissions,

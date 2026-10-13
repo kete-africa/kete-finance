@@ -36,3 +36,14 @@ flowchart TB
 | Feedback          | `lib/shell.tsx`, `/api/avis` | `@kete/feedback`                     |
 | Journal           | `/journal`, `lib/journal.ts` | `@kete/admin` (audit)                |
 | Design            | `platform/app.ts`, `styles/` | `@kete/design`                       |
+| Amounts           | `features/*/domain`          | `@kete/money`                        |
+| Document numbers  | `features/*/commands`        | `@kete/sequences`                    |
+| Facts of money    | `features/register`          | `@kete/center`, `money-fact.v1`      |
+
+## The center is told after the gesture
+
+A gesture commits in the app first. Then `platform/sync.ts` asks the center for what it has not
+heard — the project of a won quote, the facts of money — with the token of who acted. What the
+center does not take waits in the app and travels with the next gesture: the center being away
+never stops the work (`docs/flows/a-won-quote-opens-its-project.md`,
+`src/features/register/README.md`).
