@@ -107,6 +107,7 @@ function RequestPage() {
           })}
         </InfoNote>
       )}
+      {request.agreement === 'unchecked' && <InfoNote>{m.request_agreement_unchecked()}</InfoNote>}
       {request.status === 'asked' && (
         <InfoNote>
           {request.route === 'center'
@@ -136,7 +137,7 @@ function RequestPage() {
             const outcome = await correctRequest({
               data: { ...written, requestId: request.requestId },
             });
-            if (!outcome.ok) return sayError(outcome.code);
+            if (!outcome.ok) return sayError(outcome.code, outcome.facts);
             await router.invalidate();
             return null;
           }}

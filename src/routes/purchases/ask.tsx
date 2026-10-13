@@ -30,7 +30,7 @@ function AskPage() {
         submitLabel={m.request_ask()}
         onSubmit={async ({ spentOn: _a, proof: _b, advanceId: _c, ...request }) => {
           const outcome = await askPurchase({ data: request });
-          if (!outcome.ok) return sayError(outcome.code);
+          if (!outcome.ok) return sayError(outcome.code, outcome.facts);
           await navigate({
             to: '/achats/$requestId',
             params: { requestId: outcome.output.requestId },

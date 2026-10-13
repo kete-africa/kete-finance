@@ -4,6 +4,14 @@ import type { ReceiptMethod } from '@/features/sales/methods';
 import type { RequestKind, RequestStatus, Route } from '../domain/purchases';
 import type { Advance, PurchaseRequest } from '../purchase.record';
 
+/** Whether a request's funders allowed it, or could not be asked (spec 004). */
+export function agreementsMigrationSql(options: { schema: string }): string {
+  return `
+alter table ${options.schema}.purchase_requests
+  add column agreement text check (agreement in ('allowed', 'unchecked'));
+`;
+}
+
 /** Requests, their lines and payments, and advances — each with its row-level security. */
 export function purchasesMigrationSql(options: { schema: string; appRole: string }): string {
   const s = options.schema;
@@ -131,6 +139,7 @@ type RequestRow = {
   route: Route;
   decision_request_id: string | null;
   decision_subject: string | null;
+  agreement: 'allowed' | 'unchecked' | null;
   decided_by: string | null;
   decided_reason: string | null;
   order_number: string | null;
@@ -142,7 +151,7 @@ type RequestRow = {
 
 const requestColumns = `request_id, number, kind, title, requester_id, requester_name, party_id,
   party_name, project_id, project_name, post, currency, amount, paid, post_budget, post_left,
-  beyond_by, status, route, decision_request_id, decision_subject, decided_by, decided_reason, order_number,
+  beyond_by, status, route, decision_request_id, decision_subject, agreement, decided_by, decided_reason, order_number,
   to_char(spent_on, 'YYYY-MM-DD') as spent_on, proof, advance_id,
   to_char(created_at, 'YYYY-MM-DD') as asked_on`;
 
@@ -176,6 +185,7 @@ const toRequest = (
   route: row.route,
   decisionRequestId: row.decision_request_id,
   decisionSubject: row.decision_subject,
+  agreement: row.agreement,
   decided: row.decided_by ? { by: row.decided_by, reason: row.decided_reason } : null,
   orderNumber: row.order_number,
   spentOn: row.spent_on,
@@ -195,6 +205,8 @@ export interface RequestWritten {
   post?: string | undefined;
   amount: number;
   standing: { budget: number; left: number; beyondBy: number } | null;
+  /** What its funders said: allowed, not asked (unchecked), or no funder to ask (null). */
+  agreement: 'allowed' | 'unchecked' | null;
   lines: PurchaseRequest['lines'];
 }
 
@@ -232,8 +244,8 @@ export async function insertRequest(
     `insert into purchase_requests
        (request_id, organization_id, number, kind, title, requester_id, requester_name, party_id,
         party_name, project_id, project_name, post, currency, amount, post_budget, post_left,
-        beyond_by, spent_on, proof, advance_id)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+        beyond_by, spent_on, proof, advance_id, agreement)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)`,
     [
       requestId,
       request.organizationId,
@@ -255,6 +267,7 @@ export async function insertRequest(
       request.spentOn ?? null,
       request.proof ?? null,
       request.advanceId ?? null,
+      request.agreement,
     ],
   );
   await writeLines(db, request.organizationId, requestId, request.lines);
@@ -272,7 +285,7 @@ export async function rewriteRequest(
     `update purchase_requests
         set title = $2, party_id = $3, party_name = $4, project_id = $5, project_name = $6,
             post = $7, amount = $8, post_budget = $9, post_left = $10, beyond_by = $11,
-            status = 'asked', route = 'waiting', decided_by = null, decided_reason = null,
+            agreement = $12, status = 'asked', route = 'waiting', decided_by = null, decided_reason = null,
             decided_at = null
       where request_id = $1`,
     [
@@ -287,6 +300,7 @@ export async function rewriteRequest(
       request.standing?.budget ?? null,
       request.standing?.left ?? null,
       request.standing?.beyondBy ?? 0,
+      request.agreement,
     ],
   );
   await writeLines(db, organizationId, requestId, request.lines);

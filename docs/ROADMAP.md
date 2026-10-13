@@ -9,6 +9,7 @@ nothing here has been used by one yet.
 | G1   | `001-sales`     | Quotes with their cost, invoices numbered without a gap, money received, a won quote's project             | « A won quote becomes a project with its budget »       | Built        |
 | G2   | `002-purchases` | Purchase requests with their project and post, expense notes, advances, the memory of prices               | « A request beyond its post goes up the circuit »       | Built        |
 | G3   | `003-treasury`  | Accounts and tills, the three states of money, the funds of each project, the till closed every day        | « Really available » is the bank less reserved and committed | Built        |
+| I1   | `004-agreements` | A request on a funded project is checked against its funders' rules in Kete Commitments first | « A funder's clause refuses a purchase »                   | Built        |
 
 After G3, one step is left for this app before a real company tries it:
 
