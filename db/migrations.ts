@@ -6,7 +6,9 @@ import { chatOutboxMigrationSql } from '@kete/notify';
 import { draftsMigrationSql } from '@kete/drafts';
 import { feedbackMigrationSql } from '@kete/feedback';
 import { outboxMigrationSql } from '@kete/sdk';
-import { tasksMigrationSql } from '@/features/tasks';
+import { sequencesMigrationSql } from '@kete/sequences';
+import { registerMigrationSql } from '@/features/register';
+import { salesMigrationSql } from '@/features/sales';
 
 export interface MigrationContext {
   schema: string;
@@ -35,7 +37,11 @@ export const migrations: Migration[] = [
         feedbackMigrationSql(context),
       ].join('\n'),
   },
-  { name: '0001_tasks', sql: (context) => tasksMigrationSql(context) },
+  // Document numbers without a gap (@kete/sequences), and the register of money.
+  {
+    name: '0001_register',
+    sql: (context) => [sequencesMigrationSql(context), registerMigrationSql(context)].join('\n'),
+  },
   // The journal keeps the chain of agents behind each gesture (doctrine D-039).
   { name: '0002_kete_delegation', sql: (context) => commandsDelegationMigrationSql(context) },
   // The business events to the center, in their own outbox (kete-core spec 049).
@@ -55,4 +61,6 @@ export const migrations: Migration[] = [
   },
   // Who uses what, per organization (kete-core spec 091).
   { name: '0007_kete_usage', sql: (context) => usageMigrationSql(context) },
+  // Sales: quotes, invoices, receipts (spec 001).
+  { name: '0008_sales', sql: (context) => salesMigrationSql(context) },
 ];

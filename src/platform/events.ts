@@ -9,7 +9,7 @@ import {
   type Manifest,
 } from '@kete/sdk';
 import { z } from 'zod';
-import { taskEvents } from '@/features/tasks';
+import { salesEvents } from '@/features/sales';
 import app from '../../kete.json' with { type: 'json' };
 import { CENTER_OUTBOX } from './announce';
 import { PRODUCT, VERSION } from './app';
@@ -30,7 +30,7 @@ function environment(): Manifest['environment'] {
 }
 
 /** The business events of every feature, announced to the center. */
-const EMITTED = [...taskEvents];
+const EMITTED = [...salesEvents];
 
 /** Where agents and other apps reach this app, once its address is known. */
 function endpoints(): { endpoints?: { mcp: string; api: string } } {
