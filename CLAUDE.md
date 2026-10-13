@@ -1,4 +1,4 @@
-# Kete Gestion — project context
+# Kete Finance — project context
 
 > The single place where this app's context lives. `AGENTS.md` points here.
 

@@ -27,7 +27,7 @@ import { announceDailyUsage, recordUse } from '../src/platform/usage';
 // test can write.
 
 const ORG = 'org_full';
-const SESSION_SECRET = 'a-session-secret-of-the-gestion-tests-01234';
+const SESSION_SECRET = 'a-session-secret-of-the-finance-tests-01234';
 process.env.SESSION_SECRET ??= SESSION_SECRET;
 process.env.KETE_ACCOUNT_URL ??= 'https://compte.kete.test';
 process.env.KETE_CLIENT_ID ??= 'client-of-the-tests';

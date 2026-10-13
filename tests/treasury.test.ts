@@ -127,7 +127,7 @@ async function committed(projectId: string, amount: number): Promise<string> {
 
 beforeAll(async () => {
   process.env.ENTERPRISE_API_URL = 'https://api.center.test';
-  process.env.PUBLIC_URL = 'https://gestion.test';
+  process.env.PUBLIC_URL = 'https://finance.test';
   vi.stubGlobal('fetch', fakeCenter);
   db = await createTestSchema({
     migrate: async (owner, context) => {

@@ -3,7 +3,7 @@
 ```mermaid
 sequenceDiagram
   participant K as Kossi (sells)
-  participant G as Gestion
+  participant G as Finance
   participant E as Kete Enterprise
   participant L as Mme Lawson (accounts)
   K->>G: quotes_win

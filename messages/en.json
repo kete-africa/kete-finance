@@ -1,6 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "app_name": "Kete Gestion",
+  "app_name": "Kete Finance",
   "meta_description": "Sales, purchases and expenses, treasury: one register of money.",
   "nav_sign_out": "Sign out",
   "review_title": "To verify",

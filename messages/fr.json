@@ -1,6 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "app_name": "Kete Gestion",
+  "app_name": "Kete Finance",
   "meta_description": "Ventes, achats et dépenses, trésorerie : un seul registre de l’argent.",
   "nav_sign_out": "Se déconnecter",
   "review_title": "À vérifier",

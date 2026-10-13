@@ -1,6 +1,6 @@
 # Roadmap
 
-The steps of Kete Gestion. Each closes on a proof: a test that names it, and — when a screen
+The steps of Kete Finance. Each closes on a proof: a test that names it, and — when a screen
 exists — what was seen in the demonstration. « Built » is not « proven with a real company »:
 nothing here has been used by one yet.
 

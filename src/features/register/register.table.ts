@@ -4,7 +4,7 @@ import { organizationPolicySql, type SqlExecutor } from '@kete/tenancy';
 export type FactKind = 'invoiced' | 'received' | 'committed' | 'spent';
 
 /**
- * A fact of money, as Gestion holds it: said again under its key, it replaces what was said. An
+ * A fact of money, as Finance holds it: said again under its key, it replaces what was said. An
  * invoice's amount is what is still due; a commitment's, what is still to pay.
  */
 export interface Fact {

@@ -122,7 +122,7 @@ const ids = {} as Record<'quote' | 'deposit' | 'rest' | 'late', string>;
 
 beforeAll(async () => {
   process.env.ENTERPRISE_API_URL = 'https://api.center.test';
-  process.env.PUBLIC_URL = 'https://gestion.test';
+  process.env.PUBLIC_URL = 'https://finance.test';
   vi.stubGlobal('fetch', fakeCenter);
   db = await createTestSchema({
     migrate: async (owner, context) => {
@@ -211,7 +211,7 @@ describe('a won quote becomes a project with its budget', () => {
         { name: 'Matériel', budget: 1_530_000 },
         { name: 'Main-d’œuvre', budget: 250_000 },
       ],
-      bornFrom: { source: 'kete-gestion', ref: `D-${year}-0001` },
+      bornFrom: { source: 'kete-finance', ref: `D-${year}-0001` },
     });
     const quote = await transaction(ORG, (tx) => findQuote(tx, ids.quote));
     expect(quote).toMatchObject({
@@ -280,7 +280,7 @@ describe('invoices and money received', () => {
       currency: 'XOF',
       project_id: center.projects[0]?.projectId,
       party_id: 'pty_0000000000000000000000000000c1c1',
-      href: `https://gestion.test/ventes/factures/${ids.deposit}`,
+      href: `https://finance.test/ventes/factures/${ids.deposit}`,
     });
     // What travels is the contract's fact, nothing else.
     expect(validateMoneyFact(fact).ok).toBe(true);
@@ -513,7 +513,7 @@ describe('what the app says about itself', () => {
   it('serves a valid manifest: its gestures, its data set, its permissions, its events', () => {
     const card = manifest();
     expect(validateManifest(card).ok).toBe(true);
-    expect(card).toMatchObject({ product: 'prd_kete_gestion', events: ['metrics.daily'] });
+    expect(card).toMatchObject({ product: 'prd_kete_finance', events: ['metrics.daily'] });
     expect(card.capabilities?.map((c) => c.name)).toEqual(
       expect.arrayContaining([
         'quote_list',

@@ -10,7 +10,7 @@ import { syncCenter } from '@/platform/sync';
 // The demonstration's data: a small solar installer, « Soleil d'Afrique », a few days into its
 // month. Everything is written through the app's own gestures, as its people would.
 
-export const DEMO_ORGANIZATION = 'org_demo_gestion';
+export const DEMO_ORGANIZATION = 'org_demo_finance';
 
 const person = (userId: string, name: string, role: KeteIdentity['role']): KeteIdentity => ({
   userId,
