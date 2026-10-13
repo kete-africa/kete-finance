@@ -26,11 +26,11 @@ flowchart LR
 
 `docs/ROADMAP.md` says what is built and what is proven, step by step.
 
-| Part                   | State                                                                 |
-| ---------------------- | --------------------------------------------------------------------- |
-| Sales                  | Built (spec 001): quotes, invoices, receipts, a won quote's project   |
-| Purchases and expenses | Next (step G2)                                                        |
-| Treasury               | Next (step G3)                                                        |
+| Part                   | State                                                                   |
+| ---------------------- | ----------------------------------------------------------------------- |
+| Sales                  | Built (spec 001): quotes, invoices, receipts, a won quote's project     |
+| Purchases and expenses | Built (spec 002): requests by project and post, expense notes, advances |
+| Treasury               | Next (step G3)                                                          |
 
 ## Run locally
 
@@ -51,8 +51,9 @@ pnpm demo              # http://localhost:3411 — a small company at work, in a
 ```
 
 `pnpm demo` needs only the two test addresses of `.env` (`KETE_TEST_OWNER_URL`,
-`KETE_TEST_APP_URL`). It opens as the owner; `http://localhost:3411/sales`, `/accountant` and
-`/cashier` open as the roles of the trade.
+`KETE_TEST_APP_URL`). It opens as the owner; `http://localhost:3411/sales`, `/buyer`, `/accountant`
+and `/cashier` open as the roles of the trade. It runs without a center: no project there, every
+expense is the running of the organization, decided by the owner.
 
 ## Test
 

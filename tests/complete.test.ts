@@ -165,7 +165,16 @@ describe('« Demander »', () => {
       sources: ['quote_list'],
     });
     // Readings only: writing a quote, issuing an invoice or recording money are never offered.
-    expect(offered[0]).toEqual(['quote_list', 'quote_get', 'invoice_list', 'invoice_get']);
+    expect(offered[0]).toEqual([
+      'quote_list',
+      'quote_get',
+      'invoice_list',
+      'invoice_get',
+      'purchase_list',
+      'purchase_get',
+      'prices_recall',
+      'advance_list',
+    ]);
   });
 });
 

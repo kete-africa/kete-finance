@@ -7,8 +7,8 @@ nothing here has been used by one yet.
 | Step | Branch          | What it gives                                                                                              | Proof                                                   | State        |
 | ---- | --------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------ |
 | G1   | `001-sales`     | Quotes with their cost, invoices numbered without a gap, money received, a won quote's project             | « A won quote becomes a project with its budget »       | Built        |
-| G2   | `002-purchases` | Purchase requests with their project and post, expense notes, advances, the memory of prices               | « A request beyond its post goes up the circuit »       | Next         |
-| G3   | `003-treasury`  | Accounts and tills, the three states of money, the funds of each project, the till closed every day        | « Really available » is the bank less reserved and committed | After G2     |
+| G2   | `002-purchases` | Purchase requests with their project and post, expense notes, advances, the memory of prices               | « A request beyond its post goes up the circuit »       | Built        |
+| G3   | `003-treasury`  | Accounts and tills, the three states of money, the funds of each project, the till closed every day        | « Really available » is the bank less reserved and committed | Next         |
 
 ## What every step rests on
 
@@ -22,7 +22,9 @@ nothing here has been used by one yet.
 ## What waits
 
 - A real model, real documents (a statement, receipts, a supplier's invoice): reading a photo into
-  a draft is kete-core's step E4, then used here in G2.
+  a draft is kete-core's step E4; expense notes then take their lines from their receipt.
+- A demonstration joined to Kete Enterprise's: a won quote's project and a request beyond its post
+  seen at the center, not only played by a test.
 - A printable quote and invoice with the company's letterhead and legal mentions; credit notes.
 - Value-added tax owed to the state: documents carry their tax, nothing tracks what is to hand
   back.

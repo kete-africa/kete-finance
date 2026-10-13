@@ -2,6 +2,7 @@
 export {
   countUntold,
   dropFact,
+  engagedOn,
   listFacts,
   moveFacts,
   registerMigrationSql,

@@ -27,8 +27,8 @@ importers:
         specifier: npm:@kete-africa/capabilities@^0.5.0
         version: '@kete-africa/capabilities@0.5.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))'
       '@kete/center':
-        specifier: npm:@kete-africa/center@^0.4.0
-        version: '@kete-africa/center@0.4.0'
+        specifier: npm:@kete-africa/center@^0.5.0
+        version: '@kete-africa/center@0.5.0'
       '@kete/commands':
         specifier: npm:@kete-africa/commands@^0.2.0
         version: '@kete-africa/commands@0.2.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))'
@@ -689,8 +689,8 @@ packages:
   '@kete-africa/capabilities@0.5.0':
     resolution: {integrity: sha512-6Sqc9m2h7Y8yMkxD43vzLFuCsWCKX+0N9MgzQN2e16mN9V7fjYPEcvUBQOsIaCdCsWHpANFgZM4R5m+aauVOzw==, tarball: https://npm.pkg.github.com/download/@kete-africa/capabilities/0.5.0/322837df52609530113ec933471c62f54de12efa}
 
-  '@kete-africa/center@0.4.0':
-    resolution: {integrity: sha512-IfjljnumeecUkkQHvnHnBBDF4/2jzt4eBxk0MfNklCdcQ3JPDzT8EBYyYiJnCe/JRC736aXmKsRSEbDU2UeKpA==, tarball: https://npm.pkg.github.com/download/@kete-africa/center/0.4.0/bc8a9cdbb60afae2db7eeded5a2adbb69580d69f}
+  '@kete-africa/center@0.5.0':
+    resolution: {integrity: sha512-IJzpZXkEk0o0voAtVbWiWKaVeng/5CNTXPCvyTH3IE329niFYsXt4PByMri7yV7T0LkQ7aCicy2jpUZRoiAEwA==, tarball: https://npm.pkg.github.com/download/@kete-africa/center/0.5.0/cdd3ebe0c7f76c145d36376c645c198fb96030d0}
 
   '@kete-africa/commands@0.2.0':
     resolution: {integrity: sha512-/uLLszL5C8CXzXZk6v7+jyWMCB0yG+eJDZ9JdDKHtTyc8esvUt1CyOMUbA4AbJz9+9ZZIVskrbIjpabypv2P/w==, tarball: https://npm.pkg.github.com/download/@kete-africa/commands/0.2.0/f0c9b37636e81c356275698065a86ee90114e76a}
@@ -717,6 +717,9 @@ packages:
     resolution: {integrity: sha512-vEf/bgwOyrx28pwJu+NZ5cpJdyTeKLMr1G4EIqLr79RnjRqQDsv0BhGF5h8vcl6jR9dCM8TCGRHzKxOlAautMA==, tarball: https://npm.pkg.github.com/download/@kete-africa/jobs/0.1.0/35cadaddb703e139d81c7faa36a8f2c51920d3e3}
     peerDependencies:
       '@kete/notify': 0.1.0@kete-africa/notify@*
+    peerDependenciesMeta:
+      '@kete/notify':
+        optional: true
 
   '@kete-africa/log@0.1.0':
     resolution: {integrity: sha512-CIZjDhUD2YTP7Jz2D7Z682cq00Vfss5nX/zNuMGBjGPHeko4KcrozcIvosm4kZi/Ydivgif8to2c6wqgRmVHpw==, tarball: https://npm.pkg.github.com/download/@kete-africa/log/0.1.0/9a02462a10a3cd662b8cb4768e8d3f48aa646816}
@@ -749,6 +752,9 @@ packages:
     resolution: {integrity: sha512-9CeMDHeoT5cvEbidExebE4ljN0GswsW7ZTpKRJjD7D4TiSdcGXrSCh/zv+TB1ZD5sbJ8tCAOYyTvCHWadFliyQ==, tarball: https://npm.pkg.github.com/download/@kete-africa/tenancy/0.1.1/880180dae326ad193f4c8f665e99e45e69272ff4}
     peerDependencies:
       drizzle-orm: '>=0.45'
+    peerDependenciesMeta:
+      drizzle-orm:
+        optional: true
 
   '@kete-africa/testing@0.1.0':
     resolution: {integrity: sha512-5GMpbYk3GeEcfr3ZeLITvIp1mG7qVByhAw2Uw4T3Xx44YIKYgEftNtSbVf1Yl867V9464MTuQooXKmyWvrn7dQ==, tarball: https://npm.pkg.github.com/download/@kete-africa/testing/0.1.0/926f7004e1a5a223c2fc13002e77c860cb35ae47}
@@ -4538,7 +4544,7 @@ snapshots:
       - drizzle-orm
       - pg-native
 
-  '@kete-africa/center@0.4.0': {}
+  '@kete-africa/center@0.5.0': {}
 
   '@kete-africa/commands@0.2.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))':
     dependencies:
@@ -4600,8 +4606,9 @@ snapshots:
 
   '@kete-africa/jobs@0.1.0(@kete-africa/notify@0.4.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))':
     dependencies:
-      '@kete/notify': '@kete-africa/notify@0.4.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)'
       pg-boss: 12.35.0
+    optionalDependencies:
+      '@kete/notify': '@kete-africa/notify@0.4.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)'
     transitivePeerDependencies:
       - pg-native
 
@@ -4668,6 +4675,7 @@ snapshots:
   '@kete-africa/tenancy@0.1.1(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))':
     dependencies:
       '@kete/sdk': '@kete-africa/sdk@0.3.0'
+    optionalDependencies:
       drizzle-orm: 0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1)
     transitivePeerDependencies:
       - pg-native
@@ -6143,6 +6151,7 @@ snapshots:
       '@types/pg': 8.23.1
       kysely: 0.28.17
       pg: 8.23.1
+    optional: true
 
   eastasianwidth@0.2.0: {}
 

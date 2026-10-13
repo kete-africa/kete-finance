@@ -165,6 +165,16 @@ export async function countUntold(db: SqlExecutor): Promise<number> {
   return Number(rows[0]?.n ?? 0);
 }
 
+/** What is engaged on a post of a project's budget: committed and still to pay, and spent. */
+export async function engagedOn(db: SqlExecutor, projectId: string, post: string): Promise<number> {
+  const { rows } = await db.query<{ total: string }>(
+    `select coalesce(sum(amount), 0) as total from money_register
+      where not gone and kind in ('committed', 'spent') and project_id = $1 and post = $2`,
+    [projectId, post],
+  );
+  return Number(rows[0]?.total ?? 0);
+}
+
 /** The facts of the register that hold, the latest first. */
 export async function listFacts(
   db: SqlExecutor,

@@ -8,6 +8,7 @@ import { feedbackMigrationSql } from '@kete/feedback';
 import { outboxMigrationSql } from '@kete/sdk';
 import { sequencesMigrationSql } from '@kete/sequences';
 import { registerMigrationSql } from '@/features/register';
+import { purchasesMigrationSql } from '@/features/purchases';
 import { salesMigrationSql } from '@/features/sales';
 
 export interface MigrationContext {
@@ -63,4 +64,6 @@ export const migrations: Migration[] = [
   { name: '0007_kete_usage', sql: (context) => usageMigrationSql(context) },
   // Sales: quotes, invoices, receipts (spec 001).
   { name: '0008_sales', sql: (context) => salesMigrationSql(context) },
+  // Purchases and expenses: requests, payments, advances (spec 002).
+  { name: '0009_purchases', sql: (context) => purchasesMigrationSql(context) },
 ];
