@@ -31,8 +31,10 @@ src/features/      one folder per feature: record, domain, commands, infrastruct
                    capabilities, policies, events, datasets, functions, ui, README
   register/        the register of money: every fact once, told to the center
   sales/           quotes, invoices, receipts
+  purchases/       purchase requests, expense notes, advances, the memory of prices
 src/platform/      the wiring, no business rule: sign-in, database, rights, registry, MCP,
-                   events, jobs, e-mails, and what the center is told after a gesture (sync.ts)
+                   events, jobs, e-mails, what the center is told after a gesture (sync.ts), and
+                   whose request it is while a gesture runs (person.ts)
 src/worker/        the worker role: e-mails, events (pg-boss)
 db/migrations.ts   every table with its row-level security, in order
 db/demo/           the demonstration's data, written through the app's own gestures
@@ -49,8 +51,10 @@ tests/             every surface under the same rules
   transaction that writes it, and is never changed nor deleted afterwards.
 - Every fact of money is written in the register (`sayFact`) in the transaction of the gesture
   that makes it true, under a key of its own: said again, it replaces what was said.
-- Who writes is not who issues, and who issues is not who holds the till: each gesture has its
-  permission, and the roles of the trade keep them apart by default.
+- Who writes is not who issues, and who issues is not who holds the till; who asks never approves
+  nor pays her own request: each gesture has its permission, and the commands refuse one's own.
+- An expense on a project names the post of its budget, and is measured against what the post has
+  left when it is asked. What goes beyond is said, and decided higher.
 - Every gesture is a named command (@kete/commands), and every capability declares its autonomy
   (@kete/capabilities): an agent prepares, a person issues, pays and decides.
 - Every table carries `organization_id` and its RLS policy in the same migration.

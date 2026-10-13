@@ -4,6 +4,7 @@ import { transaction } from '@/platform/db';
 import { registry } from '@/platform/registry';
 import { asPerson } from '@/platform/rights';
 import { screenActor } from '@/platform/session';
+import { syncCenter } from '@/platform/sync';
 
 // The demonstration's data: a small solar installer, « Soleil d'Afrique », a few days into its
 // month. Everything is written through the app's own gestures, as its people would.
@@ -46,13 +47,15 @@ async function act<T = Record<string, unknown>>(
     }),
   );
   if (result.status !== 'done') throw new Error(`${name}: ${JSON.stringify(result)}`);
+  // What follows a gesture on a screen: here, without a center, who decides her requests.
+  await syncCenter(null, { actor: screenActor(who), organizationId: DEMO_ORGANIZATION });
   return result.output as T;
 }
 
 const day = (offset: number) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
 
 export async function seedDemo(): Promise<void> {
-  const { owner, sales, accountant, cashier } = demoPeople;
+  const { owner, sales, buyer, accountant, cashier } = demoPeople;
   await transaction(DEMO_ORGANIZATION, async (db) => {
     for (const [role, who] of Object.entries(demoPeople)) {
       if (role !== 'owner') await assignBusinessRole(db, DEMO_ORGANIZATION, who.userId, role);
@@ -136,4 +139,75 @@ export async function seedDemo(): Promise<void> {
     ],
   });
   await act(accountant, 'invoices_issue', repair);
+
+  // Purchases and expenses. Without a center there is no project: everything is the running of
+  // the organization, decided here by the owner.
+  type Asked = { requestId: string };
+  const ink = await act<Asked>(sales, 'purchases_ask', {
+    title: 'Cartouches d’encre',
+    partyName: 'Papeterie du Golfe',
+    lines: [{ label: 'Cartouche noire XL', quantity: 2, unitPrice: 18_000 }],
+  });
+  await act(owner, 'purchases_decide', { ...ink, decision: 'approve' });
+  await act(buyer, 'purchases_order', ink);
+  await act(cashier, 'purchases_pay', {
+    ...ink,
+    amount: 36_000,
+    paidOn: day(-2),
+    method: 'cash',
+    reference: 'Reçu n° 2217',
+  });
+
+  // Asked, waiting for the owner.
+  await act(sales, 'purchases_ask', {
+    title: 'Outillage de pose',
+    partyName: 'Quincaillerie Moderne',
+    lines: [
+      { label: 'Perforateur', quantity: 1, unitPrice: 95_000 },
+      { label: 'Jeu de clés dynamométriques', quantity: 1, unitPrice: 50_000 },
+    ],
+  });
+
+  // An expense note, approved, to pay back.
+  const fuel = await act<Asked>(buyer, 'expenses_file', {
+    title: 'Carburant véhicule de service',
+    spentOn: day(-3),
+    proof: 'Ticket Total n° 88213',
+    lines: [{ label: 'Gasoil', quantity: 1, unitPrice: 25_000 }],
+  });
+  await act(owner, 'purchases_decide', { ...fuel, decision: 'approve' });
+
+  // Sent back: what is to be corrected is said.
+  const internet = await act<Asked>(accountant, 'purchases_ask', {
+    title: 'Abonnement internet',
+    partyName: 'Togocom',
+    lines: [{ label: 'Fibre 50 Mb/s', quantity: 1, unitPrice: 45_000 }],
+  });
+  await act(owner, 'purchases_decide', {
+    ...internet,
+    decision: 'return',
+    reason: 'Précisez la période : un mois, ou l’année ?',
+  });
+
+  // An advance, partly justified by a note.
+  const advance = await act<{ advanceId: string }>(cashier, 'advances_give', {
+    holderId: sales.userId,
+    holderName: sales.name,
+    purpose: 'Déplacement à Kpalimé (visite Hôtel Sarakawa)',
+    amount: 60_000,
+    givenOn: day(-4),
+    method: 'cash',
+    reference: 'Reçu signé',
+  });
+  const trip = await act<Asked>(sales, 'expenses_file', {
+    title: 'Déplacement à Kpalimé',
+    spentOn: day(-3),
+    proof: 'Tickets agrafés',
+    advanceId: advance.advanceId,
+    lines: [
+      { label: 'Carburant', quantity: 1, unitPrice: 15_000 },
+      { label: 'Repas', quantity: 2, unitPrice: 3_750 },
+    ],
+  });
+  await act(owner, 'purchases_decide', { ...trip, decision: 'approve' });
 }

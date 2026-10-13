@@ -6,10 +6,12 @@ import {
   definePermissions,
 } from '@kete/capabilities';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { purchasesPermissions } from '@/features/purchases';
 import { salesPermissions } from '@/features/sales';
 import * as m from '@/paraglide/messages.js';
 import { getCenter } from './center';
 import { transaction } from './db';
+import { withPerson } from './person';
 import { words } from './words';
 
 /**
@@ -19,6 +21,7 @@ import { words } from './words';
  */
 export const permissions = definePermissions([
   ...salesPermissions,
+  ...purchasesPermissions,
   // The organization's journal: who did what, agents included (@kete/admin).
   {
     name: 'journal:read',
@@ -62,7 +65,10 @@ export async function asPerson<T>(
   token?: string | null,
 ): Promise<T> {
   const held = identity ? await rights.permissionsOf(identity, token) : new Set<string>();
-  return current.run({ identity, permissions: held }, work);
+  // Her token and her name, for what a gesture asks the center while it runs.
+  return current.run({ identity, permissions: held }, () =>
+    withPerson({ token, name: identity?.name }, work),
+  );
 }
 
 export function currentIdentity(): KeteIdentity | null {

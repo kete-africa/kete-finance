@@ -531,7 +531,9 @@ describe('what the app says about itself', () => {
     expect(issue).toMatchObject({ roles: ['owner', 'admin'] });
     expect(issue?.label.fr).toBeTruthy();
     expect(issue?.label.en).toBeTruthy();
-    expect(card.emits?.map((e) => e.type)).toEqual(['quote.won', 'invoice.issued', 'receipt.recorded']);
+    expect(card.emits?.map((e) => e.type)).toEqual(
+      expect.arrayContaining(['quote.won', 'invoice.issued', 'receipt.recorded']),
+    );
   });
 
   it('reads the invoices as a data set, under the read permission', async () => {
