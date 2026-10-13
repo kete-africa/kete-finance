@@ -32,6 +32,7 @@ src/features/      one folder per feature: record, domain, commands, infrastruct
   register/        the register of money: every fact once, told to the center
   sales/           quotes, invoices, receipts
   purchases/       purchase requests, expense notes, advances, the memory of prices
+  treasury/        accounts and their movements, the three states of money, the tills' closings
 src/platform/      the wiring, no business rule: sign-in, database, rights, registry, MCP,
                    events, jobs, e-mails, what the center is told after a gesture (sync.ts), and
                    whose request it is while a gesture runs (person.ts)
@@ -49,6 +50,9 @@ tests/             every surface under the same rules
   float, never a figure written by a model or summed on a screen.
 - A document that leaves — an issued invoice — takes its number from `@kete/sequences`, in the
   transaction that writes it, and is never changed nor deleted afterwards.
+- Money that comes in or goes out lands on its account in the transaction of the gesture that
+  moves it (`moveMoney`). « Really available » is computed in one place
+  (`treasury/domain/standing.ts`): held, less reserved for projects, less committed.
 - Every fact of money is written in the register (`sayFact`) in the transaction of the gesture
   that makes it true, under a key of its own: said again, it replaces what was said.
 - Who writes is not who issues, and who issues is not who holds the till; who asks never approves

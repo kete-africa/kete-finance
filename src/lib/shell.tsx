@@ -34,6 +34,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link to="/achats" className="text-body-sm font-semibold text-fg-muted hover:text-fg">
               {m.nav_purchases()}
             </Link>
+            <Link
+              to="/tresorerie"
+              className="text-body-sm font-semibold text-fg-muted hover:text-fg"
+            >
+              {m.nav_treasury()}
+            </Link>
             <Link to="/demander" className="text-body-sm font-semibold text-fg-muted hover:text-fg">
               {m.nav_ask()}
             </Link>

@@ -30,7 +30,7 @@ flowchart LR
 | ---------------------- | ----------------------------------------------------------------------- |
 | Sales                  | Built (spec 001): quotes, invoices, receipts, a won quote's project     |
 | Purchases and expenses | Built (spec 002): requests by project and post, expense notes, advances |
-| Treasury               | Next (step G3)                                                          |
+| Treasury               | Built (spec 003): accounts, the three states of money, funds by project |
 
 ## Run locally
 

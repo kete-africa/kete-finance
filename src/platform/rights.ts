@@ -8,6 +8,7 @@ import {
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { purchasesPermissions } from '@/features/purchases';
 import { salesPermissions } from '@/features/sales';
+import { treasuryPermissions } from '@/features/treasury';
 import * as m from '@/paraglide/messages.js';
 import { getCenter } from './center';
 import { transaction } from './db';
@@ -22,6 +23,7 @@ import { words } from './words';
 export const permissions = definePermissions([
   ...salesPermissions,
   ...purchasesPermissions,
+  ...treasuryPermissions,
   // The organization's journal: who did what, agents included (@kete/admin).
   {
     name: 'journal:read',

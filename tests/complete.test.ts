@@ -174,6 +174,7 @@ describe('« Demander »', () => {
       'purchase_get',
       'prices_recall',
       'advance_list',
+      'treasury_standing',
     ]);
   });
 });

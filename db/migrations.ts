@@ -10,6 +10,7 @@ import { sequencesMigrationSql } from '@kete/sequences';
 import { registerMigrationSql } from '@/features/register';
 import { purchasesMigrationSql } from '@/features/purchases';
 import { salesMigrationSql } from '@/features/sales';
+import { treasuryMigrationSql } from '@/features/treasury';
 
 export interface MigrationContext {
   schema: string;
@@ -66,4 +67,6 @@ export const migrations: Migration[] = [
   { name: '0008_sales', sql: (context) => salesMigrationSql(context) },
   // Purchases and expenses: requests, payments, advances (spec 002).
   { name: '0009_purchases', sql: (context) => purchasesMigrationSql(context) },
+  // Treasury: accounts, their movements, the tills' closings (spec 003).
+  { name: '0010_treasury', sql: (context) => treasuryMigrationSql(context) },
 ];

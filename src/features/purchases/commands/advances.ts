@@ -1,6 +1,7 @@
 import { defineCommand } from '@kete/commands';
 import { formatNumber, nextNumber } from '@kete/sequences';
 import { CURRENCY, hrefOf, sayFact, type Fact } from '@/features/register';
+import { moveMoney } from '@/features/treasury';
 import { actingFor } from '@/platform/person';
 import { outstandingOf, PURCHASE_NUMBERS, PurchaseRuleError } from '../domain/purchases';
 import {
@@ -69,6 +70,16 @@ export const giveAdvance = defineCommand({
       reference: input.reference,
       givenBy: actingFor(actor),
     });
+    await moveMoney(db, organizationId, {
+      direction: 'out',
+      amount: input.amount,
+      on: input.givenOn,
+      method: input.method,
+      label: `${number} — ${input.purpose}`,
+      source: `advance:${advanceId}`,
+      projectId: input.projectId ?? null,
+      recordedBy: actingFor(actor),
+    });
     const advance = await findAdvance(db, advanceId);
     if (advance) await sayFact(db, organizationId, advanceFact(advance));
     return { advanceId, number };
@@ -81,12 +92,23 @@ export const returnAdvance = defineCommand({
   name: 'return-advance',
   input: advanceReturnInput,
   reversibility: { reversible: false },
-  async handler({ advanceId, amount }, { db, organizationId }) {
+  async handler({ advanceId, amount, returnedOn }, { db, organizationId, actor }) {
     const advance = await findAdvance(db, advanceId);
     if (!advance) throw new PurchaseRuleError('advance_not_found');
     if (advance.status === 'closed') throw new PurchaseRuleError('advance_closed');
     if (amount > outstandingOf(advance)) throw new PurchaseRuleError('more_than_advance');
     const after = await settleAdvance(db, advanceId, 'returned', amount);
+    // What is brought back comes back the way it was given.
+    await moveMoney(db, organizationId, {
+      direction: 'in',
+      amount,
+      on: returnedOn,
+      method: advance.method,
+      label: `${advance.number} — ${advance.purpose}`,
+      source: `advance-return:${advanceId}:${after.returned}`,
+      projectId: advance.projectId,
+      recordedBy: actingFor(actor),
+    });
     await sayFact(db, organizationId, advanceFact(after));
     return { advanceId, outstanding: outstandingOf(after) };
   },

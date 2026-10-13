@@ -1,6 +1,7 @@
 import { defineCommand } from '@kete/commands';
 import { formatNumber, nextNumber } from '@kete/sequences';
 import { CURRENCY, hrefOf, sayFact, today } from '@/features/register';
+import { moveMoney } from '@/features/treasury';
 import { announce } from '@/platform/announce';
 import { dueAfter, NUMBERS, partOf, SalesRuleError, totalsOf } from '../domain/sales';
 import {
@@ -169,6 +170,18 @@ export const recordReceipt = defineCommand({
       receivedOn: input.receivedOn,
       method: input.method,
       reference: input.reference,
+      recordedBy: actor.id,
+    });
+    // The money lands on the account its way of paying goes to — a till closed for that day
+    // refuses it.
+    await moveMoney(db, organizationId, {
+      direction: 'in',
+      amount: input.amount,
+      on: input.receivedOn,
+      method: input.method,
+      label: `${invoice.number ?? ''} — ${invoice.partyName}`,
+      source: `receipt:${receiptId}`,
+      projectId: invoice.projectId,
       recordedBy: actor.id,
     });
     await sayFact(db, organizationId, dueFact(invoice, due));

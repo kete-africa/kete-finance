@@ -2,6 +2,6 @@
 export { purchasesCapabilities, useReadsAll } from './capabilities';
 export { purchasesEvents } from './events';
 export { purchasesPermissions, purchasesSubjects } from './policies';
-export { purchasesMigrationSql } from './infrastructure/purchases.table';
+export { knownProjects, purchasesMigrationSql } from './infrastructure/purchases.table';
 export { applyDecision, decisionOf, readDecision, routeWaiting } from './route';
 export type { Advance, PurchaseRequest } from './purchase.record';

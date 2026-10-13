@@ -132,5 +132,7 @@ export interface Advance {
   justified: number;
   returned: number;
   givenOn: string;
+  /** How it was given: what is brought back comes back the same way. */
+  method: ReceiptMethod;
   status: 'open' | 'closed';
 }

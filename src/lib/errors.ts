@@ -35,6 +35,16 @@ export function sayError(code: string): string {
     advance_closed: m.errors_advance_closed,
     not_the_holder: m.errors_not_the_holder,
     more_than_advance: m.errors_more_than_advance,
+    account_not_found: m.errors_account_not_found,
+    account_closed: m.errors_account_closed,
+    not_a_till: m.errors_not_a_till,
+    till_closed: m.errors_till_closed,
+    already_closed: m.errors_already_closed,
+    not_enough_in_account: m.errors_not_enough_in_account,
+    same_account: m.errors_same_account,
+    movement_not_found: m.errors_movement_not_found,
+    movement_assigned: m.errors_movement_assigned,
+    day_not_over: m.errors_day_not_over,
   };
   return (words[code] ?? m.errors_generic)();
 }

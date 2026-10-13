@@ -16,6 +16,8 @@ export const routes = rootRoute('__root.tsx', [
   route('/achats/note-de-frais', 'purchases/expense.tsx'),
   route('/achats/avances', 'purchases/advances.tsx'),
   route('/achats/$requestId', 'purchases/request.tsx'),
+  route('/tresorerie', 'treasury/index.tsx'),
+  route('/tresorerie/$accountId', 'treasury/account.tsx'),
   route('/api/centre/decisions', 'api/center-decisions.ts'),
   route('/verification/$draftId', 'review/$draftId.tsx'),
   route('/demander', 'ask.tsx'),
