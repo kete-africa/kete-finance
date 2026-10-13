@@ -104,6 +104,8 @@ export interface PurchaseRequest {
   decisionRequestId: string | null;
   /** The subject it was asked under at the center. */
   decisionSubject: string | null;
+  /** What its funders said in Kete Commitments: allowed, not asked, or no funder (null). */
+  agreement: 'allowed' | 'unchecked' | null;
   decided: { by: string; reason: string | null } | null;
   orderNumber: string | null;
   spentOn: string | null;

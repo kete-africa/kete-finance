@@ -415,5 +415,7 @@
   "errors_same_account": "Choose another account.",
   "errors_movement_not_found": "This movement does not exist, or no longer.",
   "errors_movement_assigned": "This movement is already assigned.",
-  "errors_day_not_over": "A day that has not started is not closed."
+  "errors_day_not_over": "A day that has not started is not closed.",
+  "errors_refused_by_agreement": "The funder does not pay for this expense (agreement {agreement}): “{clause}”",
+  "request_agreement_unchecked": "The project’s funders’ rules could not be checked: who decides must bear them in mind."
 }

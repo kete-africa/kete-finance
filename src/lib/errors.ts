@@ -4,8 +4,13 @@ import * as m from '@/paraglide/messages.js';
  * A gesture's code in words (`RuleError`, a refusal): what happened, why, what to do. A code
  * without its own words is said in general terms, never as a code.
  */
-export function sayError(code: string): string {
+export function sayError(code: string, facts: Record<string, string | number> = {}): string {
   const words: Record<string, () => string> = {
+    refused_by_agreement: () =>
+      m.errors_refused_by_agreement({
+        agreement: String(facts['agreement'] ?? ''),
+        clause: String(facts['clause'] ?? ''),
+      }),
     not_allowed: m.errors_not_allowed,
     invalid_input: m.errors_invalid_input,
     not_found: m.errors_not_found,

@@ -415,5 +415,7 @@
   "errors_same_account": "Choisissez un autre compte.",
   "errors_movement_not_found": "Ce mouvement n’existe pas, ou plus.",
   "errors_movement_assigned": "Ce mouvement est déjà affecté.",
-  "errors_day_not_over": "On ne clôture pas un jour qui n’est pas commencé."
+  "errors_day_not_over": "On ne clôture pas un jour qui n’est pas commencé.",
+  "errors_refused_by_agreement": "Le bailleur ne finance pas cette dépense (convention {agreement}) : « {clause} »",
+  "request_agreement_unchecked": "Les règles des bailleurs du projet n’ont pas pu être vérifiées : qui décide doit les avoir en tête."
 }

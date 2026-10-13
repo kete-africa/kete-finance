@@ -44,3 +44,7 @@ stateDiagram-v2
   has neither justified nor brought back (spent, no post).
 - The center is asked for a decision **after** the request commits, with the token of who asked
   (`routeWaiting`, from `platform/sync.ts`).
+
+## A funder's rules (spec 004)
+
+`agreements.ts` asks Kete Commitments (`spending_check`) before a request on a project is written, with the person's token. Refused: `refused_by_agreement`, with the agreement and its passage, and nothing is written. Not asked: the request goes on with `agreement = unchecked`.

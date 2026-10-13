@@ -23,9 +23,11 @@ export class PurchaseRuleError extends RuleError {
       | 'advance_not_found'
       | 'advance_closed'
       | 'not_the_holder'
-      | 'more_than_advance',
+      | 'more_than_advance'
+      | 'refused_by_agreement',
+    facts: Record<string, string | number> = {},
   ) {
-    super(code);
+    super(code, facts);
     this.name = 'PurchaseRuleError';
   }
 }

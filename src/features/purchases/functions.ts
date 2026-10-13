@@ -31,10 +31,14 @@ import { readDecision } from './route';
 // The screens of purchases and expenses. Anyone who may ask reads her own requests; reading
 // everyone's, approving here, ordering and paying each show only to who may.
 
-const answer = <T>(outcome: { ok: true; output: T } | { ok: false; code: string }) =>
+const answer = <T>(
+  outcome:
+    | { ok: true; output: T }
+    | { ok: false; code: string; facts?: Record<string, string | number> },
+) =>
   outcome.ok
     ? { ok: true as const, output: outcome.output }
-    : { ok: false as const, code: outcome.code };
+    : { ok: false as const, code: outcome.code, facts: outcome.facts ?? {} };
 
 const may = () => ({
   ask: holds('purchases:ask'),

@@ -33,7 +33,7 @@ function ExpensePage() {
           const outcome = await fileExpense({
             data: { ...request, spentOn: spentOn ?? new Date().toISOString().slice(0, 10) },
           });
-          if (!outcome.ok) return sayError(outcome.code);
+          if (!outcome.ok) return sayError(outcome.code, outcome.facts);
           await navigate({
             to: '/achats/$requestId',
             params: { requestId: outcome.output.requestId },

@@ -27,6 +27,7 @@ import {
   settleAdvance,
   waitingOn,
 } from '../infrastructure/purchases.table';
+import { checkAgreements } from '../agreements';
 import { postOf, projectOf } from '../projects';
 import {
   correctionInput,
@@ -67,11 +68,19 @@ async function numbered(
  */
 async function placed(
   db: SqlExecutor,
-  input: { projectId?: string | undefined; post?: string | undefined },
+  input: {
+    projectId?: string | undefined;
+    post?: string | undefined;
+    title: string;
+    lines: readonly { label: string }[];
+    spentOn?: string | undefined;
+  },
   amount: number,
   except?: string,
 ) {
-  if (!input.projectId) return { projectName: null, post: undefined, standing: null };
+  if (!input.projectId) {
+    return { projectName: null, post: undefined, standing: null, agreement: null };
+  }
   if (!input.post) throw new PurchaseRuleError('post_required');
   const project = await projectOf(input.projectId);
   if (!project) throw new PurchaseRuleError('not_of_project');
@@ -79,10 +88,25 @@ async function placed(
   const engaged =
     (await engagedOn(db, input.projectId, post.name)) +
     (await waitingOn(db, input.projectId, post.name, except));
+  // What its funders allow: refused, it is not written at all, and the passage is said.
+  const verdict = await checkAgreements({
+    projectId: input.projectId,
+    post: post.name,
+    amount,
+    label: [input.title, ...input.lines.map((line) => line.label)].join(' — '),
+    on: input.spentOn ?? today(),
+  });
+  if (verdict.state === 'refused') {
+    throw new PurchaseRuleError('refused_by_agreement', {
+      agreement: verdict.agreement,
+      clause: verdict.clause,
+    });
+  }
   return {
     projectName: project.name,
     post: post.name,
     standing: standingOf(post.budget, engaged, amount),
+    agreement: verdict.state === 'none' ? null : verdict.state,
   };
 }
 
@@ -127,6 +151,7 @@ async function ask(
       currency: CURRENCY,
       amount,
       standing: place.standing,
+      agreement: place.agreement,
       lines: input.lines,
       spentOn: input.spentOn,
       proof: input.proof,
@@ -185,6 +210,7 @@ export const correctRequest = defineCommand({
       post: place.post,
       amount,
       standing: place.standing,
+      agreement: place.agreement,
       lines: input.lines,
     });
     return { requestId, amount, beyondBy: place.standing?.beyondBy ?? 0 };
