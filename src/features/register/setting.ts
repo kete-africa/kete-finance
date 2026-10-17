@@ -14,3 +14,9 @@ export function hrefOf(path: string): string | null {
   const base = (process.env.PUBLIC_URL ?? '').replace(/\/$/, '');
   return base ? `${base}${path}` : null;
 }
+
+/** A holding's address at the center (kete-core spec 114): an https page of this app, or none. */
+export function linkOf(path: string): { href?: string } {
+  const href = hrefOf(path);
+  return href?.startsWith('https://') ? { href } : {};
+}

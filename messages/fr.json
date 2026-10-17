@@ -417,5 +417,12 @@
   "errors_movement_assigned": "Ce mouvement est déjà affecté.",
   "errors_day_not_over": "On ne clôture pas un jour qui n’est pas commencé.",
   "errors_refused_by_agreement": "Le bailleur ne finance pas cette dépense (convention {agreement}) : « {clause} »",
-  "request_agreement_unchecked": "Les règles des bailleurs du projet n’ont pas pu être vérifiées : qui décide doit les avoir en tête."
+  "request_agreement_unchecked": "Les règles des bailleurs du projet n’ont pas pu être vérifiées : qui décide doit les avoir en tête.",
+  "holding_quote_sent": "Devis {number} : attendre la réponse de {party}",
+  "holding_invoice_due": "Encaisser la facture {number} de {party}",
+  "holding_request_returned": "Corriger la demande {number} — {title}",
+  "holding_request_to_approve": "Approuver la demande {number} — {title}",
+  "holding_request_to_order": "Commander {number} — {title}",
+  "holding_advance_open": "Justifier l’avance {number} — {purpose}",
+  "decided_by_policy": "les politiques de l’organisation"
 }

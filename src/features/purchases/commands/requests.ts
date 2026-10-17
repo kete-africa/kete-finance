@@ -320,9 +320,10 @@ export const routeRequest = defineCommand({
     route: z.enum(['center', 'here']),
     decisionRequestId: z.string().max(64).optional(),
     decisionSubject: z.string().max(64).optional(),
+    approverId: z.string().max(100).optional(),
   }),
   reversibility: { reversible: false },
-  async handler({ requestId, route, decisionRequestId, decisionSubject }, { db }) {
+  async handler({ requestId, route, decisionRequestId, decisionSubject, approverId }, { db }) {
     await setRoute(
       db,
       requestId,
@@ -330,6 +331,7 @@ export const routeRequest = defineCommand({
       decisionRequestId && decisionSubject
         ? { requestId: decisionRequestId, subject: decisionSubject }
         : null,
+      approverId ?? null,
     );
     return { requestId, route };
   },

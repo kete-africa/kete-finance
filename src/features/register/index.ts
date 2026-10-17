@@ -12,4 +12,4 @@ export {
   type FactKind,
 } from './register.table';
 export { tellCenter } from './tell';
-export { CURRENCY, hrefOf, today } from './setting';
+export { CURRENCY, hrefOf, linkOf, today } from './setting';

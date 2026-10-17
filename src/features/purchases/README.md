@@ -45,6 +45,15 @@ stateDiagram-v2
 - The center is asked for a decision **after** the request commits, with the token of who asked
   (`routeWaiting`, from `platform/sync.ts`).
 
+## The organization's policies (spec 005)
+
+Once asked, a request is a `purchase.commit` the center's policies decide first (kete-core spec
+114): allowed as it stands, it is approved at once by « les politiques de l’organisation »;
+refused, it is refused with their sentences; to approve — or when no policy speaks of it — it goes
+to the circuit, else is decided here, held by the first person the policies name
+(`approver_id`). What purchases hold — a request sent back, one to approve here, a purchase to
+order, an advance to justify — is said to the center as holdings (`purchaseHoldings`).
+
 ## A funder's rules (spec 004)
 
 `agreements.ts` asks Kete Commitments (`spending_check`) before a request on a project is written, with the person's token. Refused: `refused_by_agreement`, with the agreement and its passage, and nothing is written. Not asked: the request goes on with `agreement = unchecked`.

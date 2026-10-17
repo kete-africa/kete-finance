@@ -8,7 +8,11 @@ import { feedbackMigrationSql } from '@kete/feedback';
 import { outboxMigrationSql } from '@kete/sdk';
 import { sequencesMigrationSql } from '@kete/sequences';
 import { registerMigrationSql } from '@/features/register';
-import { agreementsMigrationSql, purchasesMigrationSql } from '@/features/purchases';
+import {
+  agreementsMigrationSql,
+  purchaseApproversMigrationSql,
+  purchasesMigrationSql,
+} from '@/features/purchases';
 import { salesMigrationSql } from '@/features/sales';
 import { treasuryMigrationSql } from '@/features/treasury';
 
@@ -71,4 +75,6 @@ export const migrations: Migration[] = [
   { name: '0010_treasury', sql: (context) => treasuryMigrationSql(context) },
   // What a request's funders said in Kete Commitments (spec 004).
   { name: '0011_agreements', sql: (context) => agreementsMigrationSql(context) },
+  // Who the organization's policies name to approve a request decided here (spec 005).
+  { name: '0012_purchase_approvers', sql: (context) => purchaseApproversMigrationSql(context) },
 ];
