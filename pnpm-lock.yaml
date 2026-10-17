@@ -62,6 +62,9 @@ importers:
       '@kete/sequences':
         specifier: npm:@kete-africa/sequences@^0.1.0
         version: '@kete-africa/sequences@0.1.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))'
+      '@kete/settings':
+        specifier: npm:@kete-africa/settings@^0.2.0
+        version: '@kete-africa/settings@0.2.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))'
       '@kete/tenancy':
         specifier: npm:@kete-africa/tenancy@^0.1.1
         version: '@kete-africa/tenancy@0.1.1(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))'
@@ -747,6 +750,9 @@ packages:
 
   '@kete-africa/sequences@0.1.0':
     resolution: {integrity: sha512-TA0HJ2zNFy/KGsQ6XAGARd9OOtIPwCDDS34cAVGMsZ1rPfOzixvtAmRE1451MIEOobx/k/pHQjHS6O2f9qwE4g==, tarball: https://npm.pkg.github.com/download/@kete-africa/sequences/0.1.0/3f67c0812eaaabc3271204a414c8b64662213d2d}
+
+  '@kete-africa/settings@0.2.0':
+    resolution: {integrity: sha512-SjEFmYifll28io2Ll3iuKZ5naeRf+9MueH8Njc+qOtt1WVoOn74WOs6VEp4X52fldQWbumhO27rlU98VdTc7kA==, tarball: https://npm.pkg.github.com/download/@kete-africa/settings/0.2.0/affbb1796cfced80f4c103c6bfea4b98e1d11833}
 
   '@kete-africa/tenancy@0.1.1':
     resolution: {integrity: sha512-9CeMDHeoT5cvEbidExebE4ljN0GswsW7ZTpKRJjD7D4TiSdcGXrSCh/zv+TB1ZD5sbJ8tCAOYyTvCHWadFliyQ==, tarball: https://npm.pkg.github.com/download/@kete-africa/tenancy/0.1.1/880180dae326ad193f4c8f665e99e45e69272ff4}
@@ -4668,6 +4674,15 @@ snapshots:
   '@kete-africa/sequences@0.1.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))':
     dependencies:
       '@kete/tenancy': '@kete-africa/tenancy@0.1.1(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))'
+    transitivePeerDependencies:
+      - drizzle-orm
+      - pg-native
+
+  '@kete-africa/settings@0.2.0(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))':
+    dependencies:
+      '@kete/records': '@kete-africa/records@0.1.1'
+      '@kete/tenancy': '@kete-africa/tenancy@0.1.1(drizzle-orm@0.45.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(kysely@0.28.17)(pg@8.23.1))'
+      zod: 4.6.6
     transitivePeerDependencies:
       - drizzle-orm
       - pg-native

@@ -1,7 +1,7 @@
 import { defineCommand } from '@kete/commands';
 import { formatNumber, nextNumber } from '@kete/sequences';
 import { z } from 'zod';
-import { CURRENCY, moveFacts } from '@/features/register';
+import { currencyIn, moveFacts } from '@/features/register';
 import { announce } from '@/platform/announce';
 import { closed, NUMBERS, SalesRuleError, sent, totalsOf } from '../domain/sales';
 import {
@@ -29,12 +29,13 @@ export const createQuote = defineCommand({
       }),
       now,
     );
-    const totals = totalsOf(input.lines, input.taxRate, CURRENCY);
+    const currency = await currencyIn(db, organizationId);
+    const totals = totalsOf(input.lines, input.taxRate, currency);
     const quoteId = await insertQuote(db, {
       ...input,
       organizationId,
       number,
-      currency: CURRENCY,
+      currency,
       totals,
       createdBy: actor.id,
     });

@@ -64,10 +64,14 @@ pnpm typecheck
 
 ## Settings
 
+The currency of new documents is Kete's setting `kete.currency` (kete-core specs 115 and 117):
+as Kete Finance sets it for the organization, else as the organization set it in the Compte Kete,
+else F CFA (`XOF`). A document keeps the currency it was written in.
+
+
 | Variable              | What it sets                                                          |
 | --------------------- | --------------------------------------------------------------------- |
 | `ENTERPRISE_API_URL`  | The center. Without it the app works alone: no project, no reference  |
-| `FINANCE_CURRENCY`    | The currency of new documents (ISO 4217); `XOF` by default            |
 
 ## Deploy
 

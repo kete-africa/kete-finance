@@ -1,6 +1,6 @@
 import { defineCommand } from '@kete/commands';
 import { formatNumber, nextNumber } from '@kete/sequences';
-import { CURRENCY, hrefOf, sayFact, type Fact } from '@/features/register';
+import { currencyIn, hrefOf, sayFact, type Fact } from '@/features/register';
 import { moveMoney } from '@/features/treasury';
 import { actingFor } from '@/platform/person';
 import { outstandingOf, PURCHASE_NUMBERS, PurchaseRuleError } from '../domain/purchases';
@@ -63,7 +63,7 @@ export const giveAdvance = defineCommand({
       purpose: input.purpose,
       projectId: input.projectId,
       projectName: project?.name ?? null,
-      currency: CURRENCY,
+      currency: await currencyIn(db, organizationId),
       amount: input.amount,
       givenOn: input.givenOn,
       method: input.method,

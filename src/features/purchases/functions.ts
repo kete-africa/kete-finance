@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
-import { CURRENCY } from '@/features/register';
+import { currencyIn } from '@/features/register';
 import { getCenter } from '@/platform/center';
 import { transaction } from '@/platform/db';
 import { centerAppToken } from '@/platform/events';
@@ -64,7 +64,7 @@ export const fetchPurchasesHome = createServerFn({ method: 'GET' }).handler(() =
       const rights = may();
       const all = rights.readAll;
       return {
-        currency: CURRENCY,
+        currency: await currencyIn(db, organizationId),
         connected: getCenter().connected,
         may: rights,
         standing: await purchasesStanding(db, all ? undefined : userId),
@@ -123,10 +123,13 @@ export const fetchRequestForm = createServerFn({ method: 'GET' }).handler(() =>
         name: project.name,
         posts: project.posts.map((post) => ({ name: post.name, budget: post.budget })),
       }));
-    const advances = await transaction(organizationId, (db) =>
-      listAdvances(db, { holderId: userId, open: true }),
+    const [advances, currency] = await transaction(organizationId, (db) =>
+      Promise.all([
+        listAdvances(db, { holderId: userId, open: true }),
+        currencyIn(db, organizationId),
+      ]),
     );
-    return { currency: CURRENCY, connected: getCenter().connected, projects, advances };
+    return { currency, connected: getCenter().connected, projects, advances };
   }),
 );
 
@@ -192,7 +195,7 @@ export const fetchAdvances = createServerFn({ method: 'GET' }).handler(() =>
         team: project.team.map((person) => ({ userId: person.userId, name: person.name })),
       }));
     return transaction(organizationId, async (db) => ({
-      currency: CURRENCY,
+      currency: await currencyIn(db, organizationId),
       may: rights,
       advances: await listAdvances(db, rights.readAll || rights.pay ? {} : { holderId: userId }),
       // Her projects at the center, with their team — and those this app already knows.
