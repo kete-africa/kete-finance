@@ -6,3 +6,4 @@ export { salesPermissions } from './policies';
 export { salesMigrationSql } from './infrastructure/sales.table';
 export { openWonProjects } from './projects';
 export type { Invoice, Quote } from './quote.record';
+export { salesHoldings } from './holdings';

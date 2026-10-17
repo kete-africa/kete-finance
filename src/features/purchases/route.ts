@@ -3,7 +3,9 @@ import { formatMoney, money } from '@kete/money';
 import * as m from '@/paraglide/messages.js';
 import { getCenter } from '@/platform/center';
 import { transaction } from '@/platform/db';
+import { PRODUCT } from '@/platform/app';
 import { log } from '@/platform/log';
+import { passGesture, sentencesOf } from '@/platform/policies';
 import { routeRequest, settleRequest } from './commands/requests';
 import { plainSubject, subjectOf } from './domain/purchases';
 import {
@@ -30,6 +32,16 @@ function titleOf(request: PurchaseRequest): string {
       })
     : m.center_request({ number: request.number, title: request.title });
 }
+
+/** A request as the organization's policies read it: a purchase committed, on its project. */
+const gestureOf = (request: PurchaseRequest) => ({
+  kind: 'purchase.commit',
+  object: request.projectId
+    ? { kind: 'project', id: request.projectId }
+    : { kind: 'subject', id: `${PRODUCT}.${request.kind}` },
+  amount: { value: request.amount, currency: request.currency },
+  ...(request.standing ? { context: { budgetLeft: request.standing.left } } : {}),
+});
 
 /** Where the center tells the app a request was decided: an https address only. */
 function callbackUrl(): string | undefined {
@@ -59,6 +71,7 @@ export async function routeWaiting(
       route: 'center' | 'here',
       decisionRequestId?: string,
       decisionSubject?: string,
+      approverId?: string,
     ) => {
       await transaction(caller.organizationId, (db) =>
         executeCommand(db, routeRequest, {
@@ -68,6 +81,7 @@ export async function routeWaiting(
             requestId: request.requestId,
             route,
             ...(decisionRequestId && decisionSubject ? { decisionRequestId, decisionSubject } : {}),
+            ...(approverId ? { approverId } : {}),
           },
         }),
       );
@@ -77,6 +91,21 @@ export async function routeWaiting(
       await decided('here');
       continue;
     }
+    // The organization's policies first (kete-core spec 114): what they allow as it stands is
+    // approved at once, what they refuse is refused with their sentences; what they leave unruled,
+    // or ask an approval for, goes to who decides — the one they name, when decided here.
+    const verdict = await passGesture(token, caller.actor, gestureOf(request));
+    if (verdict.effect === 'allow' || verdict.effect === 'refuse') {
+      await decided('center');
+      await applyDecision(caller.organizationId, request.requestId, {
+        status: verdict.effect === 'allow' ? 'approved' : 'refused',
+        decidedBy: m.decided_by_policy(),
+        reason: sentencesOf(verdict) || null,
+      });
+      continue;
+    }
+    const approverId =
+      verdict.effect === 'approve' ? verdict.approvers.flatMap((a) => a.people)[0] : undefined;
     const ask = (subject: string) =>
       center.requestDecision(token, {
         subject,
@@ -106,7 +135,7 @@ export async function routeWaiting(
         });
       }
     } else if (answer.error === 'no_circuit' || answer.error === 'unknown_subject') {
-      await decided('here');
+      await decided('here', undefined, undefined, approverId);
     } else {
       log.warn('decision not asked at the center', { request: request.number, error: answer.error });
       break;

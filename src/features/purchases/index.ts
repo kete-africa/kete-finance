@@ -5,8 +5,10 @@ export { purchasesPermissions, purchasesSubjects } from './policies';
 export {
   agreementsMigrationSql,
   knownProjects,
+  purchaseApproversMigrationSql,
   purchasesMigrationSql,
 } from './infrastructure/purchases.table';
+export { purchaseHoldings } from './holdings';
 export { useAgreementCheck } from './agreements';
 export { applyDecision, decisionOf, readDecision, routeWaiting } from './route';
 export type { Advance, PurchaseRequest } from './purchase.record';

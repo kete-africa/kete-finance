@@ -41,3 +41,10 @@ stateDiagram-v2
   what came in (`receipt:<id>`).
 - `attach-project` is run by the app when the center answers, never by a hand: it moves the
   quote's invoices and their facts to the project.
+
+## What sales hold (spec 005)
+
+A quote sent and an issued invoice not fully paid are said to the center as holdings
+(`salesHoldings`, kete-core spec 114): held by who wrote them, waiting on their client when the
+center knows it, due on the quote's validity or the invoice's day, on their project when they
+have one.

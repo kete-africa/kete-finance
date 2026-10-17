@@ -10,6 +10,7 @@ nothing here has been used by one yet.
 | G2   | `002-purchases` | Purchase requests with their project and post, expense notes, advances, the memory of prices               | « A request beyond its post goes up the circuit »       | Built        |
 | G3   | `003-treasury`  | Accounts and tills, the three states of money, the funds of each project, the till closed every day        | « Really available » is the bank less reserved and committed | Built        |
 | I1   | `004-agreements` | A request on a funded project is checked against its funders' rules in Kete Commitments first | « A funder's clause refuses a purchase »                   | Built        |
+| A5   | `005-on-the-model` | What it holds said to the center as holdings; a request decided by the organization's policies first | « A request the policies allow is approved at once »      | Built        |
 
 After G3, one step is left for this app before a real company tries it:
 

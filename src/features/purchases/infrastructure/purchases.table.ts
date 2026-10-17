@@ -13,6 +13,11 @@ alter table ${options.schema}.purchase_requests
 }
 
 /** Requests, their lines and payments, and advances — each with its row-level security. */
+/** Who the policies name to approve a request decided here (spec 005, kete-core spec 114). */
+export function purchaseApproversMigrationSql(options: { schema: string }): string {
+  return `alter table ${options.schema}.purchase_requests add column approver_id text;`;
+}
+
 export function purchasesMigrationSql(options: { schema: string; appRole: string }): string {
   const s = options.schema;
   const policy = (table: string) =>
@@ -410,13 +415,15 @@ export async function setRoute(
   requestId: string,
   route: Route,
   decision: { requestId: string; subject: string } | null,
+  /** Who the organization's policies name to approve it here (kete-core spec 114). */
+  approverId: string | null = null,
 ): Promise<void> {
   await db.query(
     `update purchase_requests
         set route = $2, decision_request_id = coalesce($3, decision_request_id),
-            decision_subject = coalesce($4, decision_subject)
+            decision_subject = coalesce($4, decision_subject), approver_id = $5
       where request_id = $1 and status = 'asked'`,
-    [requestId, route, decision?.requestId ?? null, decision?.subject ?? null],
+    [requestId, route, decision?.requestId ?? null, decision?.subject ?? null, approverId],
   );
 }
 
