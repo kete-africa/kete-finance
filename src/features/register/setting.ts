@@ -1,8 +1,14 @@
+import type { SqlExecutor } from '@kete/tenancy';
+import { settingsIn } from '@/platform/settings';
+
 /**
- * The currency of the deployment's documents (`FINANCE_CURRENCY`, ISO 4217): F CFA by default. A
- * document keeps the currency it was written in.
+ * The currency of new documents (ISO 4217; kete-core specs 115 and 117): `kete.currency` as Kete
+ * Finance sets it for the organization, else as the organization set it in the Compte Kete, else
+ * F CFA. A document keeps the currency it was written in.
  */
-export const CURRENCY: string = (process.env.FINANCE_CURRENCY ?? 'XOF').toUpperCase();
+export async function currencyIn(db: SqlExecutor, organizationId: string): Promise<string> {
+  return (await settingsIn(db, organizationId)).value<string>('kete.currency');
+}
 
 /** Today, as documents date themselves (`2026-10-13`). */
 export function today(now: Date = new Date()): string {

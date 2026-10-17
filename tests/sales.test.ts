@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import type { KeteIdentity } from '@kete/auth';
 import { assignBusinessRole, performGesture, type Caller } from '@kete/capabilities';
 import { validateManifest, validateMoneyFact } from '@kete/sdk';
+import { clearSetting, setSetting } from '@kete/settings';
 import { assertOrganizationIsolation, createTestSchema, type TestSchema } from '@kete/testing';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { migrations } from '../db/migrations';
@@ -13,6 +14,7 @@ import { manifest } from '../src/platform/events';
 import { datasets, registry } from '../src/platform/registry';
 import { asPerson } from '../src/platform/rights';
 import { screenActor } from '../src/platform/session';
+import { settingsRegistry } from '../src/platform/settings';
 import { syncCenter } from '../src/platform/sync';
 
 // Spec 001 — sales. The proof of step G1: « A won quote becomes a project with its budget »; and
@@ -563,5 +565,31 @@ describe('what the app says about itself', () => {
     const fr = JSON.parse(readFileSync(new URL('../messages/fr.json', import.meta.url), 'utf8'));
     const en = JSON.parse(readFileSync(new URL('../messages/en.json', import.meta.url), 'utf8'));
     expect(Object.keys(en).sort()).toEqual(Object.keys(fr).sort());
+  });
+});
+
+describe('the currency of new documents (spec 006)', () => {
+  it('is Kete’s setting for the organization, never an environment variable', async () => {
+    await transaction(ORG, (tx) =>
+      setSetting(tx, ORG, settingsRegistry, {
+        layer: 'app',
+        key: 'kete.currency',
+        value: 'GHS',
+        by: 'usr_ama',
+      }),
+    );
+    const written = done(
+      await gesture<{ quoteId: string }>(kofi, 'quotes_create', { ...solarQuote, title: 'Accra' }),
+    );
+    const quote = await transaction(ORG, (tx) => findQuote(tx, written.quoteId));
+    expect(quote?.currency).toBe('GHS');
+    // Taken back, the organization's own currency — or F CFA — applies again.
+    await transaction(ORG, (tx) =>
+      clearSetting(tx, ORG, { layer: 'app', key: 'kete.currency', by: 'usr_ama' }),
+    );
+    const next = done(
+      await gesture<{ quoteId: string }>(kofi, 'quotes_create', { ...solarQuote, title: 'Lomé' }),
+    );
+    expect((await transaction(ORG, (tx) => findQuote(tx, next.quoteId)))?.currency).toBe('XOF');
   });
 });

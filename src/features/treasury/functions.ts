@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { knownProjects } from '@/features/purchases';
-import { CURRENCY } from '@/features/register';
+import { currencyIn } from '@/features/register';
 import { transaction } from '@/platform/db';
 import { holds } from '@/platform/rights';
 import { perform, ScreenError, signedIn } from '@/platform/screen';
@@ -44,7 +44,7 @@ export const fetchTreasury = createServerFn({ method: 'GET' }).handler(() =>
       const standing = await treasuryStanding(db);
       const names = new Map((await knownProjects(db)).map((p) => [p.projectId, p.name]));
       return {
-        currency: CURRENCY,
+        currency: await currencyIn(db, organizationId),
         may: may(),
         ...standing,
         projects: standing.projects.map((project) => ({
@@ -62,7 +62,7 @@ export const fetchAccount = createServerFn({ method: 'GET' })
   .handler(({ data }) =>
     reading((organizationId) =>
       transaction(organizationId, async (db) => ({
-        currency: CURRENCY,
+        currency: await currencyIn(db, organizationId),
         may: may(),
         account: await findAccount(db, data.accountId),
         accounts: await listAccounts(db),

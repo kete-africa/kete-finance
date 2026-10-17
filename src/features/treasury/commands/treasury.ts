@@ -1,5 +1,5 @@
 import { defineCommand } from '@kete/commands';
-import { CURRENCY, today } from '@/features/register';
+import { currencyIn, today } from '@/features/register';
 import { actingFor } from '@/platform/person';
 import { kindOfMethod, TreasuryRuleError } from '../domain/treasury';
 import {
@@ -30,7 +30,7 @@ export const openAccount = defineCommand({
     const accountId = await insertAccount(db, {
       organizationId,
       ...input,
-      currency: CURRENCY,
+      currency: await currencyIn(db, organizationId),
       createdBy: actingFor(actor),
     });
     return { accountId };

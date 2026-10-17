@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
-import { countUntold, CURRENCY } from '@/features/register';
+import { countUntold, currencyIn } from '@/features/register';
 import * as m from '@/paraglide/messages.js';
 import { getCenter } from '@/platform/center';
 import { transaction } from '@/platform/db';
@@ -52,7 +52,7 @@ const may = () => ({
 export const fetchSalesHome = createServerFn({ method: 'GET' }).handler(() =>
   reading((organizationId) =>
     transaction(organizationId, async (db) => ({
-      currency: CURRENCY,
+      currency: await currencyIn(db, organizationId),
       standing: await salesStanding(db),
       toInvoice: await wonNotInvoiced(db),
       due: await searchInvoices(db, { due: true, limit: 50 }),
@@ -108,7 +108,10 @@ export const fetchInvoice = createServerFn({ method: 'GET' })
 
 /** What a new document starts from: the currency, and whether the center gives its references. */
 export const fetchSalesSetting = createServerFn({ method: 'GET' }).handler(() =>
-  reading(async () => ({ currency: CURRENCY, connected: getCenter().connected })),
+  reading(async (organizationId) => ({
+    currency: await transaction(organizationId, (db) => currencyIn(db, organizationId)),
+    connected: getCenter().connected,
+  })),
 );
 
 /** The third parties of the center matching a few letters: a client is picked, never retyped. */

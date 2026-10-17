@@ -7,6 +7,7 @@ import { draftsMigrationSql } from '@kete/drafts';
 import { feedbackMigrationSql } from '@kete/feedback';
 import { outboxMigrationSql } from '@kete/sdk';
 import { sequencesMigrationSql } from '@kete/sequences';
+import { settingsMigrationSql } from '@kete/settings';
 import { registerMigrationSql } from '@/features/register';
 import {
   agreementsMigrationSql,
@@ -77,4 +78,6 @@ export const migrations: Migration[] = [
   { name: '0011_agreements', sql: (context) => agreementsMigrationSql(context) },
   // Who the organization's policies name to approve a request decided here (spec 005).
   { name: '0012_purchase_approvers', sql: (context) => purchaseApproversMigrationSql(context) },
+  // The app's settings and their journal: the currency of new documents (spec 006).
+  { name: '0013_kete_settings', sql: (context) => settingsMigrationSql(context) },
 ];

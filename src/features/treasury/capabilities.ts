@@ -1,7 +1,7 @@
 import { defineCapability } from '@kete/capabilities';
 import { money, toDecimal } from '@kete/money';
 import { z } from 'zod';
-import { CURRENCY } from '@/features/register';
+import { currencyIn } from '@/features/register';
 import {
   assignMovement,
   closeTill,
@@ -18,7 +18,8 @@ import {
   transferInput,
 } from './treasury.record';
 
-const shown = (amount: number) => `${toDecimal(money(amount, CURRENCY))} ${CURRENCY}`;
+const shownIn = (currency: string) => (amount: number) =>
+  `${toDecimal(money(amount, currency))} ${currency}`;
 
 /**
  * What agents may do with the treasury: read where the money stands — every figure computed here,
@@ -33,7 +34,8 @@ export const treasuryCapabilities = [
     autonomy: 1,
     classification: 'confidential',
     input: z.object({}),
-    async run(_input, { db }) {
+    async run(_input, { db, organizationId }) {
+      const shown = shownIn(await currencyIn(db, organizationId));
       const standing = await treasuryStanding(db);
       return {
         held: shown(standing.held),

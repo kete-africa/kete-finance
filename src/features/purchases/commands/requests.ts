@@ -2,7 +2,7 @@ import { defineCommand, type Actor } from '@kete/commands';
 import { formatNumber, nextNumber } from '@kete/sequences';
 import type { SqlExecutor } from '@kete/tenancy';
 import { z } from 'zod';
-import { CURRENCY, engagedOn, hrefOf, sayFact, today } from '@/features/register';
+import { currencyIn, engagedOn, hrefOf, sayFact, today } from '@/features/register';
 import { moveMoney } from '@/features/treasury';
 import { announce } from '@/platform/announce';
 import { actingFor, currentName } from '@/platform/person';
@@ -133,7 +133,8 @@ async function ask(
 ) {
   {
     const requesterId = actingFor(actor);
-    const amount = amountOf(input.lines, CURRENCY);
+    const currency = await currencyIn(db, organizationId);
+    const amount = amountOf(input.lines, currency);
     const place = await placed(db, input, amount);
     if (input.advanceId) await advanceFor(db, input.advanceId, requesterId, amount);
     const number = await numbered(db, organizationId, kind);
@@ -148,7 +149,7 @@ async function ask(
       projectId: input.projectId,
       projectName: place.projectName,
       post: place.post,
-      currency: CURRENCY,
+      currency,
       amount,
       standing: place.standing,
       agreement: place.agreement,
@@ -160,7 +161,7 @@ async function ask(
     await announce(db, {
       type: 'purchase.asked',
       organization: organizationId,
-      data: { requestId, kind, amount, currency: CURRENCY, beyondBy: place.standing?.beyondBy ?? 0 },
+      data: { requestId, kind, amount, currency, beyondBy: place.standing?.beyondBy ?? 0 },
     });
     return { requestId, number, amount, beyondBy: place.standing?.beyondBy ?? 0 };
   }

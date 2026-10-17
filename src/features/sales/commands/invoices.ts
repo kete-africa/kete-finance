@@ -1,6 +1,6 @@
 import { defineCommand } from '@kete/commands';
 import { formatNumber, nextNumber } from '@kete/sequences';
-import { CURRENCY, hrefOf, sayFact, today } from '@/features/register';
+import { currencyIn, hrefOf, sayFact, today } from '@/features/register';
 import { moveMoney } from '@/features/treasury';
 import { announce } from '@/platform/announce';
 import { dueAfter, NUMBERS, partOf, SalesRuleError, totalsOf } from '../domain/sales';
@@ -72,10 +72,11 @@ export const createInvoice = defineCommand({
   input: directInvoiceInput,
   reversibility: { reversible: false },
   async handler(input, { db, organizationId, actor }) {
+    const currency = await currencyIn(db, organizationId);
     const totals = totalsOf(
       input.lines.map((line) => ({ ...line, unitCost: 0 })),
       input.taxRate,
-      CURRENCY,
+      currency,
     );
     const invoiceId = await insertInvoice(db, {
       organizationId,
@@ -83,7 +84,7 @@ export const createInvoice = defineCommand({
       partyId: input.partyId,
       partyName: input.partyName,
       projectId: input.projectId,
-      currency: CURRENCY,
+      currency,
       taxRate: input.taxRate,
       subtotal: totals.subtotal,
       tax: totals.tax,
