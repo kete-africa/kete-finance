@@ -10,7 +10,9 @@ import { syncCenter } from '@/platform/sync';
 // The demonstration's data: a small solar installer, « Soleil d'Afrique », a few days into its
 // month. Everything is written through the app's own gestures, as its people would.
 
-export const DEMO_ORGANIZATION = 'org_demo_finance';
+// Joined to a Compte Kete on this machine (kete-core's `pnpm platform`): its organization.
+const joined = process.env.KETE_DEMO_JOINED === 'on';
+export const DEMO_ORGANIZATION = (joined && process.env.KETE_DEMO_ORGANIZATION) || 'org_demo_finance';
 
 const person = (userId: string, name: string, role: KeteIdentity['role']): KeteIdentity => ({
   userId,
@@ -25,7 +27,8 @@ const person = (userId: string, name: string, role: KeteIdentity['role']): KeteI
 
 /** Who the demonstration can be opened as: the owner, and one person per role of the trade. */
 export const demoPeople = {
-  owner: person('usr_demo_afi', 'Afi Mensah', 'owner'),
+  // Joined: the person signed in through the Compte Kete is the owner.
+  owner: person((joined && process.env.KETE_DEMO_ME) || 'usr_demo_afi', 'Afi Mensah', 'owner'),
   sales: person('usr_demo_kossi', 'Kossi Adjo', 'member'),
   buyer: person('usr_demo_yao', 'Yao Agbeko', 'member'),
   accountant: person('usr_demo_lawson', 'Mme Lawson', 'member'),

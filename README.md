@@ -55,6 +55,12 @@ pnpm demo              # http://localhost:3411 — a small company at work, in a
 and `/cashier` open as the roles of the trade. It runs without a center: no project there, every
 expense is the running of the organization, decided by the owner.
 
+**Joined to the whole platform** (kete-core's `pnpm platform`, `KETE_DEMO_JOINED=on`): the app signs
+people in through the local Compte Kete, its data are seeded in that Compte Kete's « KYA démo »
+organization — seeded as the app alone, then its screens speak to the center and the other apps —
+and the person signed in is its owner. It then answers on `http://127.0.0.1:<port>`, the loopback
+address the Compte Kete accepts for a client's return.
+
 ## Test
 
 ```bash
