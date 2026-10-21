@@ -61,6 +61,8 @@ organization — seeded as the app alone, then its screens speak to the center a
 and the person signed in is its owner. It then answers on `http://127.0.0.1:<port>`, the loopback
 address the Compte Kete accepts for a client's return.
 
+
+**Threads and drafts** (Kete Enterprise spec 098; kete-core spec 139): a quote's and an invoice's thread is born at the center the first time they are opened (« Fil du document »); a draft an agent prepared is shown by `@kete/drafts`' `describeDraft` — titles and labels in her words, F CFA, dates, names — never raw.
 ## Test
 
 ```bash

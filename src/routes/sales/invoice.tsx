@@ -34,7 +34,7 @@ const methodLabel = (method: ReceiptMethod) =>
   })[method]();
 
 function InvoicePage() {
-  const { invoice, may } = Route.useLoaderData();
+  const { invoice, may, threadHref } = Route.useLoaderData();
   const router = useRouter();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -103,6 +103,14 @@ function InvoicePage() {
         )
       }
     >
+      {threadHref && (
+        <a
+          href={threadHref}
+          className="inline-flex w-fit items-center rounded-control border border-line-control px-3 py-1.5 text-body-sm font-semibold"
+        >
+          {m.document_thread()}
+        </a>
+      )}
       <ErrorNote>{error}</ErrorNote>
       <ConfirmDialog
         open={confirming}

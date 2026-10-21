@@ -36,7 +36,7 @@ export const Route = createFileRoute('/ventes/devis/$quoteId')({
 });
 
 function QuotePage() {
-  const { quote, invoices, connected, may, setting } = Route.useLoaderData();
+  const { quote, invoices, connected, may, setting, threadHref } = Route.useLoaderData();
   const router = useRouter();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
@@ -102,6 +102,14 @@ function QuotePage() {
         )
       }
     >
+      {threadHref && (
+        <a
+          href={threadHref}
+          className="inline-flex w-fit items-center rounded-control border border-line-control px-3 py-1.5 text-body-sm font-semibold"
+        >
+          {m.document_thread()}
+        </a>
+      )}
       <ErrorNote>{error}</ErrorNote>
       <ConfirmDialog
         open={confirming !== null}
