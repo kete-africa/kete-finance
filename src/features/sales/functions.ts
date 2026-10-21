@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { countUntold, currencyIn } from '@/features/register';
 import * as m from '@/paraglide/messages.js';
 import { getCenter } from '@/platform/center';
+import { env } from '@/platform/env';
 import { transaction } from '@/platform/db';
 import { holds } from '@/platform/rights';
 import { perform, ScreenError, signedIn } from '@/platform/screen';
@@ -33,6 +34,30 @@ const answer = <T>(outcome: { ok: true; output: T } | { ok: false; code: string 
   outcome.ok
     ? { ok: true as const, output: outcome.output }
     : { ok: false as const, code: outcome.code };
+
+/**
+ * A document's thread at the center (Kete Enterprise spec 098, FR-010): born the first time the
+ * document is opened, the same one after; without a center, none, and the app works alone.
+ */
+async function threadOf(object: {
+  kind: 'quote' | 'invoice';
+  id: string;
+  title: string;
+  href: string;
+  party: string | null;
+  project?: string | null;
+}): Promise<string | null> {
+  const { token } = await signedIn();
+  const opened = await getCenter().openObjectThread(token, {
+    kind: object.kind,
+    id: object.id,
+    title: object.title.slice(0, 200),
+    href: `${env.publicUrl}${object.href}`,
+    ...(object.party ? { party: object.party } : {}),
+    ...(object.project ? { project: object.project } : {}),
+  });
+  return opened?.href ?? null;
+}
 
 async function reading<T>(work: (organizationId: string) => Promise<T>): Promise<T> {
   const { caller, as } = await signedIn();
@@ -75,16 +100,29 @@ export const fetchQuotes = createServerFn({ method: 'GET' }).handler(() =>
 
 export const fetchQuote = createServerFn({ method: 'GET' })
   .validator((input: unknown) => quoteRef.parse(input))
-  .handler(({ data }) =>
-    reading((organizationId) =>
+  .handler(async ({ data }) => {
+    const read = await reading((organizationId) =>
       transaction(organizationId, async (db) => ({
         quote: await findQuote(db, data.quoteId),
         invoices: await invoicesOfQuote(db, data.quoteId),
         connected: getCenter().connected,
         may: may(),
       })),
-    ),
-  );
+    );
+    const quote = read.quote;
+    return {
+      ...read,
+      threadHref: quote
+        ? await threadOf({
+            kind: 'quote',
+            id: quote.quoteId,
+            title: `${quote.number} — ${quote.title}`,
+            href: `/ventes/devis/${quote.quoteId}`,
+            party: quote.partyId,
+          })
+        : null,
+    };
+  });
 
 export const fetchInvoices = createServerFn({ method: 'GET' }).handler(() =>
   reading((organizationId) =>
@@ -97,14 +135,28 @@ export const fetchInvoices = createServerFn({ method: 'GET' }).handler(() =>
 
 export const fetchInvoice = createServerFn({ method: 'GET' })
   .validator((input: unknown) => invoiceRef.parse(input))
-  .handler(({ data }) =>
-    reading((organizationId) =>
+  .handler(async ({ data }) => {
+    const read = await reading((organizationId) =>
       transaction(organizationId, async (db) => ({
         invoice: await findInvoice(db, data.invoiceId),
         may: may(),
       })),
-    ),
-  );
+    );
+    const invoice = read.invoice;
+    return {
+      ...read,
+      threadHref: invoice
+        ? await threadOf({
+            kind: 'invoice',
+            id: invoice.invoiceId,
+            title: `${invoice.number ?? m.invoice_no_number()} — ${invoice.title}`,
+            href: `/ventes/factures/${invoice.invoiceId}`,
+            party: invoice.partyId,
+            project: invoice.projectId,
+          })
+        : null,
+    };
+  });
 
 /** What a new document starts from: the currency, and whether the center gives its references. */
 export const fetchSalesSetting = createServerFn({ method: 'GET' }).handler(() =>
