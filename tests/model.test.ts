@@ -1,12 +1,14 @@
 import type { KeteIdentity } from '@kete/auth';
-import { holdingBody } from '@kete/center';
+import { holdingBody, objectBody } from '@kete/center';
 import { assignBusinessRole, performGesture, type Caller } from '@kete/capabilities';
+import { validateManifest, validateObject, validateObjectType } from '@kete/sdk';
 import { createTestSchema, type TestSchema } from '@kete/testing';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { migrations } from '../db/migrations';
-import { purchaseHoldings } from '../src/features/purchases';
+import { purchaseHoldings, purchaseObjects } from '../src/features/purchases';
 import { findRequest } from '../src/features/purchases/infrastructure/purchases.table';
-import { salesHoldings } from '../src/features/sales';
+import { salesHoldings, salesObjects } from '../src/features/sales';
+import { manifest } from '../src/platform/events';
 import { transaction, usePool } from '../src/platform/db';
 import { registry } from '../src/platform/registry';
 import { asPerson } from '../src/platform/rights';
@@ -169,6 +171,33 @@ describe('what Kete Finance holds', () => {
       expect(body).toMatchObject({ source: { app: 'prd_kete_finance' }, holder: { kind: 'person' } });
       expect(String(body.what).length).toBeLessThanOrEqual(300);
       if (body.state === 'waiting') expect(body).toHaveProperty('waiting_on');
+    }
+  });
+});
+
+describe('its objects in the center’s index (spec 007; kete-core spec 142)', () => {
+  it('declares quotes, invoices and purchase requests, with their states and axes', () => {
+    const declared = manifest();
+    expect(validateManifest(declared).ok).toBe(true);
+    expect((declared.objects ?? []).map((o) => o.kind)).toEqual(['quote', 'invoice', 'purchase']);
+    for (const kind of declared.objects ?? []) expect(validateObjectType(kind).ok).toBe(true);
+  });
+
+  it('says each one with its title, state, project, third party and who answers for it', async () => {
+    const objects = await transaction(ORG, async (tx) => [
+      ...(await salesObjects(tx)),
+      ...(await purchaseObjects(tx)),
+    ]);
+    const quote = objects.find((o) => o.kind === 'quote');
+    expect(quote).toMatchObject({ state: 'sent', personId: 'usr_kofi' });
+    expect(quote?.title).toContain('Garage Bè');
+    const purchase = objects.find((o) => o.kind === 'purchase' && o.state === 'asked');
+    expect(purchase).toMatchObject({ personId: expect.any(String) });
+    // In the contract's shape (object.v1), each with a state its kind declares.
+    const states = new Map((manifest().objects ?? []).map((k) => [k.kind, k.states.map((x) => x.id)]));
+    for (const object of objects) {
+      expect(validateObject(objectBody(object)).ok).toBe(true);
+      expect(states.get(object.kind)).toContain(object.state);
     }
   });
 });

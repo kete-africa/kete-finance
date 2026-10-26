@@ -2,23 +2,186 @@
   "product": "prd_kete_finance",
   "name": "Kete Finance",
   "version": "0.1.0",
-  "events": [
-    "metrics.daily"
-  ],
+  "events": ["metrics.daily"],
   "governance": {
     "owner": {
       "name": "Kete",
       "contact": "support@kete.africa"
     },
-    "dataCategories": [
-      "personal",
-      "financial",
-      "confidential"
-    ],
+    "dataCategories": ["personal", "financial", "confidential"],
     "ai": {
       "used": true,
       "purpose": "Answers questions with the readings the person may open (« Demander »), when a model is configured."
     },
     "criticality": "high"
-  }
+  },
+  "objects": [
+    {
+      "kind": "quote",
+      "label": {
+        "fr": "Devis",
+        "en": "Quote",
+        "fr_plural": "Devis",
+        "en_plural": "Quotes"
+      },
+      "icon": "doc",
+      "states": [
+        {
+          "id": "draft",
+          "label": {
+            "fr": "Brouillon",
+            "en": "Draft"
+          },
+          "tone": "neutral"
+        },
+        {
+          "id": "sent",
+          "label": {
+            "fr": "Envoyé",
+            "en": "Sent"
+          },
+          "tone": "info"
+        },
+        {
+          "id": "won",
+          "label": {
+            "fr": "Gagné",
+            "en": "Won"
+          },
+          "tone": "ok",
+          "closed": true
+        },
+        {
+          "id": "lost",
+          "label": {
+            "fr": "Perdu",
+            "en": "Lost"
+          },
+          "tone": "neutral",
+          "closed": true
+        }
+      ],
+      "axes": ["project", "party", "person"]
+    },
+    {
+      "kind": "invoice",
+      "label": {
+        "fr": "Facture",
+        "en": "Invoice",
+        "fr_plural": "Factures",
+        "en_plural": "Invoices"
+      },
+      "icon": "files",
+      "states": [
+        {
+          "id": "draft",
+          "label": {
+            "fr": "Brouillon",
+            "en": "Draft"
+          },
+          "tone": "neutral"
+        },
+        {
+          "id": "issued",
+          "label": {
+            "fr": "Émise",
+            "en": "Issued"
+          },
+          "tone": "info"
+        },
+        {
+          "id": "paid",
+          "label": {
+            "fr": "Payée",
+            "en": "Paid"
+          },
+          "tone": "ok",
+          "closed": true
+        }
+      ],
+      "axes": ["project", "party", "person"],
+      "links": [
+        {
+          "relation": "bills",
+          "to": "quote",
+          "label": {
+            "fr": "facture",
+            "en": "bills"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "purchase",
+      "label": {
+        "fr": "Demande d’achat",
+        "en": "Purchase request",
+        "fr_plural": "Demandes d’achat",
+        "en_plural": "Purchase requests"
+      },
+      "icon": "cart",
+      "states": [
+        {
+          "id": "asked",
+          "label": {
+            "fr": "Demandée",
+            "en": "Asked"
+          },
+          "tone": "info"
+        },
+        {
+          "id": "returned",
+          "label": {
+            "fr": "Renvoyée",
+            "en": "Returned"
+          },
+          "tone": "verify"
+        },
+        {
+          "id": "approved",
+          "label": {
+            "fr": "Approuvée",
+            "en": "Approved"
+          },
+          "tone": "ok"
+        },
+        {
+          "id": "ordered",
+          "label": {
+            "fr": "Commandée",
+            "en": "Ordered"
+          },
+          "tone": "info"
+        },
+        {
+          "id": "paid",
+          "label": {
+            "fr": "Payée",
+            "en": "Paid"
+          },
+          "tone": "ok",
+          "closed": true
+        },
+        {
+          "id": "refused",
+          "label": {
+            "fr": "Refusée",
+            "en": "Refused"
+          },
+          "tone": "error",
+          "closed": true
+        },
+        {
+          "id": "cancelled",
+          "label": {
+            "fr": "Annulée",
+            "en": "Cancelled"
+          },
+          "tone": "neutral",
+          "closed": true
+        }
+      ],
+      "axes": ["project", "party", "person"]
+    }
+  ]
 }
