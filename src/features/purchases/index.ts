@@ -9,6 +9,7 @@ export {
   purchasesMigrationSql,
 } from './infrastructure/purchases.table';
 export { purchaseHoldings } from './holdings';
+export { purchaseObjects } from './objects';
 export { useAgreementCheck } from './agreements';
 export { applyDecision, decisionOf, readDecision, routeWaiting } from './route';
 export type { Advance, PurchaseRequest } from './purchase.record';
